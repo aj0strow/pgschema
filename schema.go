@@ -2,7 +2,6 @@ package pgschema
 
 type Schema struct {
 	SchemaName string
-	Tables     []Table
 }
 
 type Table struct {
@@ -11,6 +10,7 @@ type Table struct {
 }
 
 type Column struct {
+	Table      *Table
 	ColumnName string
 	DataType   string
 }
