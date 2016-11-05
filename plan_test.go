@@ -14,6 +14,26 @@ func TestPlanTables(t *testing.T) {
 	}
 	tests := []Test{
 		Test{
+			"no tables",
+			[]Table{},
+			[]Table{},
+			[]Change{},
+		},
+		Test{
+			"no changes",
+			[]Table{
+				Table{
+					TableName: "customers",
+				},
+			},
+			[]Table{
+				Table{
+					TableName: "customers",
+				},
+			},
+			[]Change{},
+		},
+		Test{
 			"create one table",
 			[]Table{
 				Table{
