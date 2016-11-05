@@ -27,6 +27,20 @@ func TestPlanTables(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"drop one table",
+			[]Table{},
+			[]Table{
+				Table{
+					TableName: "events",
+				},
+			},
+			[]Change{
+				DropTable{
+					TableName: "events",
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		changes := PlanTables(test.A, test.B)

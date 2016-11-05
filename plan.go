@@ -6,6 +6,9 @@ func PlanTables(a, b []Table) []Change {
 	create := createTable(a, b)
 	changes = append(changes, create...)
 
+	drop := dropTable(a, b)
+	changes = append(changes, drop...)
+
 	return changes
 }
 
@@ -17,6 +20,19 @@ func createTable(a, b []Table) []Change {
 				TableName: t.TableName,
 			}
 			changes = append(changes, ct)
+		}
+	}
+	return changes
+}
+
+func dropTable(a, b []Table) []Change {
+	changes := []Change{}
+	for _, t := range b {
+		if !hasTable(a, t) {
+			dt := DropTable{
+				TableName: t.TableName,
+			}
+			changes = append(changes, dt)
 		}
 	}
 	return changes
