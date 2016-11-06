@@ -16,7 +16,7 @@ type CreateTable struct {
 }
 
 func (ct CreateTable) String() string {
-	return fmt.Sprintf("CREATE TABLE %s", ct.TableName)
+	return fmt.Sprintf("CREATE TABLE %s ()", ct.TableName)
 }
 
 var _ Change = (*CreateTable)(nil)
@@ -33,27 +33,61 @@ func (dt DropTable) String() string {
 
 var _ Change = (*DropTable)(nil)
 
+// Alter an existing table. This change occurs when you have matching
+// table names but the schema doesn't match.
+type AlterTable struct {
+	TableName string
+	Change    Change
+}
+
+func (at AlterTable) String() string {
+	return fmt.Sprintf(`ALTER TABLE %s %s`, at.TableName, at.Change)
+}
+
+var _ Change = (*AlterColumn)(nil)
+
 // Add a new column to an existing table.
 type AddColumn struct {
-	TableName  string
 	ColumnName string
 	DataType   string
 }
 
 func (ac AddColumn) String() string {
-	return fmt.Sprintf(`ALTER TABLE %s ADD COLUMN %s %s`, ac.TableName, ac.ColumnName, ac.DataType)
+	return fmt.Sprintf(`ADD COLUMN %s %s`, ac.ColumnName, ac.DataType)
 }
 
 var _ Change = (*AddColumn)(nil)
 
 // Drop existing column from existing table.
 type DropColumn struct {
-	TableName  string
 	ColumnName string
 }
 
 func (dc DropColumn) String() string {
-	return fmt.Sprintf(`ALTER TABLE %s DROP COLUMN %s RESTRICT`)
+	return fmt.Sprintf(`DROP COLUMN %s RESTRICT`, dc.ColumnName)
 }
 
 var _ Change = (*DropColumn)(nil)
+
+// Atler an existing column.
+type AlterColumn struct {
+	ColumnName string
+	Change     Change
+}
+
+func (ac AlterColumn) String() string {
+	return fmt.Sprintf(`ALTER COLUMN %s %s`, ac.ColumnName, ac.Change)
+}
+
+var _ Change = (*AlterColumn)(nil)
+
+// Change the column data type.
+type SetDataType struct {
+	DataType string
+}
+
+func (sd SetDataType) String() string {
+	return fmt.Sprintf(`SET DATA TYPE %s`, sd.DataType)
+}
+
+var _ Change = (*SetDataType)(nil)

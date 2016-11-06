@@ -7,6 +7,7 @@ import (
 
 type PG interface {
 	Query(string, ...interface{}) (*pgx.Rows, error)
+	Exec(string, ...interface{}) (pgx.CommandTag, error)
 }
 
 func LoadTables(pg PG, schemaName string) ([]Table, error) {
