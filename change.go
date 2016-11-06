@@ -9,6 +9,14 @@ type Change interface {
 	String() string
 }
 
+type CreateSchema struct {
+	SchemaName string
+}
+
+func (cs CreateSchema) String() string {
+	return fmt.Sprintf(`CREATE SCHEMA %s`, cs.SchemaName)
+}
+
 // Create a new table. This change occurs when you have a table name in
 // the new schema with no match in the old schema.
 type CreateTable struct {
@@ -16,7 +24,7 @@ type CreateTable struct {
 }
 
 func (ct CreateTable) String() string {
-	return fmt.Sprintf("CREATE TABLE %s ()", ct.TableName)
+	return fmt.Sprintf(`CREATE TABLE %s ()`, ct.TableName)
 }
 
 var _ Change = (*CreateTable)(nil)
@@ -28,7 +36,7 @@ type DropTable struct {
 }
 
 func (dt DropTable) String() string {
-	return fmt.Sprintf("DROP TABLE %s", dt.TableName)
+	return fmt.Sprintf(`DROP TABLE %s`, dt.TableName)
 }
 
 var _ Change = (*DropTable)(nil)
