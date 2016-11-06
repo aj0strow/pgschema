@@ -9,14 +9,14 @@ type PG interface {
 	Query(string, ...interface{}) (*pgx.Rows, error)
 }
 
-func LoadTables(pg PG, schema *Schema) ([]Table, error) {
+func LoadTables(pg PG, schemaName string) ([]Table, error) {
 	q := fmt.Sprintf(`
 		SELECT table_name
 		FROM information_schema.tables
 		WHERE table_schema = '%s'
 		AND table_type = 'BASE TABLE'
 		ORDER BY table_name ASC
-	`, schema.SchemaName)
+	`, schemaName)
 	rows, err := pg.Query(q)
 	if err != nil {
 		return nil, err
@@ -34,15 +34,13 @@ func LoadTables(pg PG, schema *Schema) ([]Table, error) {
 	return tables, nil
 }
 
-func LoadColumns(pg PG, schema *Schema, table *Table) ([]Column, error) {
+func LoadColumns(pg PG, schemaName, tableName string) ([]Column, error) {
 	q := fmt.Sprintf(`
-		SELECT
-			column_name,
-			data_type
+		SELECT column_name, data_type
 		FROM information_schema.columns
 		WHERE table_schema = '%s'
 		AND table_name = '%s'
-	`, schema.SchemaName, table.TableName)
+	`, schemaName, tableName)
 	rows, err := pg.Query(q)
 	if err != nil {
 		return nil, err

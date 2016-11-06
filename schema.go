@@ -6,11 +6,9 @@ type Schema struct {
 
 type Table struct {
 	TableName string
-	Columns   []Column
 }
 
 type Column struct {
-	Table      *Table
 	ColumnName string
 	DataType   string
 }

@@ -12,14 +12,11 @@ func TestLoadTables(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer conn.Close()
-	schema := &Schema{
-		SchemaName: conn.Schema,
-	}
 	_, err = conn.Exec(`CREATE TABLE users ()`)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tables, err := LoadTables(conn, schema)
+	tables, err := LoadTables(conn, conn.Schema)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,17 +55,13 @@ func runLoadColumn(t *testing.T, q string, c Column) {
 		t.Fatal(err)
 	}
 	defer conn.Close()
-	schema := &Schema{
-		SchemaName: conn.Schema,
-	}
-	table := &Table{
-		TableName: "test",
-	}
-	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE %s (%s)`, table.TableName, q))
+	schemaName := conn.Schema
+	tableName := "test"
+	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE %s (%s)`, tableName, q))
 	if err != nil {
 		t.Fatal(err)
 	}
-	cs, err := LoadColumns(conn, schema, table)
+	cs, err := LoadColumns(conn, schemaName, tableName)
 	if err != nil {
 		t.Fatal(err)
 	}
