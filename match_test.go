@@ -1,6 +1,7 @@
 package pgschema
 
 import (
+	"github.com/aj0strow/pgschema/info"
 	"reflect"
 	"testing"
 )
@@ -143,8 +144,8 @@ func TestMatchColumnNodes(t *testing.T) {
 	}
 }
 
-func newTable(name string) Table {
-	return Table{
+func newTable(name string) info.Table {
+	return info.Table{
 		TableName: name,
 	}
 }
@@ -155,7 +156,7 @@ func newTableNode(name string) TableNode {
 	}
 }
 
-func ptrTable(name string) *Table {
+func ptrTable(name string) *info.Table {
 	table := newTable(name)
 	return &table
 }

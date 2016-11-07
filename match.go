@@ -13,8 +13,8 @@ type SchemaMatch struct {
 
 // TableMatch is a combined table with new version A and old version B.
 type TableMatch struct {
-	A             *Table
-	B             *Table
+	A             *info.Table
+	B             *info.Table
 	ColumnMatches []ColumnMatch
 }
 

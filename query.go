@@ -10,31 +10,6 @@ type PG interface {
 	Exec(string, ...interface{}) (pgx.CommandTag, error)
 }
 
-func LoadTables(pg PG, schemaName string) ([]Table, error) {
-	q := fmt.Sprintf(`
-		SELECT table_name
-		FROM information_schema.tables
-		WHERE table_schema = '%s'
-		AND table_type = 'BASE TABLE'
-		ORDER BY table_name ASC
-	`, schemaName)
-	rows, err := pg.Query(q)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	tables := []Table{}
-	for rows.Next() {
-		table := Table{}
-		rows.Scan(&table.TableName)
-		tables = append(tables, table)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return tables, nil
-}
-
 func LoadColumns(pg PG, schemaName, tableName string) ([]Column, error) {
 	q := fmt.Sprintf(`
 		SELECT column_name, data_type

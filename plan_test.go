@@ -1,6 +1,7 @@
 package pgschema
 
 import (
+	"github.com/aj0strow/pgschema/info"
 	"reflect"
 	"testing"
 )
@@ -15,7 +16,7 @@ func TestPlanTableMatch(t *testing.T) {
 		Test{
 			"create new table",
 			TableMatch{
-				A: &Table{
+				A: &info.Table{
 					TableName: "users",
 				},
 				B: nil,
@@ -28,7 +29,7 @@ func TestPlanTableMatch(t *testing.T) {
 			"drop old table",
 			TableMatch{
 				A: nil,
-				B: &Table{
+				B: &info.Table{
 					TableName: "customers",
 				},
 			},
