@@ -1,25 +1,16 @@
-package pgschema
+package temp
 
 import (
 	"fmt"
 	"github.com/jackc/pgx"
 )
 
-var (
-	counter = 0
-)
-
-func randSchemaName() string {
-	counter += 1
-	return fmt.Sprintf("db%d", counter)
-}
-
-type TmpConn struct {
+type Conn struct {
 	*pgx.Conn
-	Schema string
+	SchemaName string
 }
 
-func Connect(database string) (*TmpConn, error) {
+func Connect(database string) (*Conn, error) {
 	config := pgx.ConnConfig{
 		Host:     "localhost",
 		Database: database,
@@ -37,15 +28,15 @@ func Connect(database string) (*TmpConn, error) {
 	if err != nil {
 		return nil, err
 	}
-	tmp := &TmpConn{
-		Conn:   conn,
-		Schema: schema,
+	tmp := &Conn{
+		Conn:       conn,
+		SchemaName: schema,
 	}
 	return tmp, nil
 }
 
-func (tmp *TmpConn) Close() error {
-	_, err := tmp.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE`, tmp.Schema))
+func (tmp *Conn) Close() error {
+	_, err := tmp.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE`, tmp.SchemaName))
 	if err != nil {
 		return err
 	}

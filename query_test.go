@@ -2,12 +2,13 @@ package pgschema
 
 import (
 	"fmt"
+	"github.com/aj0strow/pgschema/temp"
 	"reflect"
 	"testing"
 )
 
 func TestLoadTables(t *testing.T) {
-	conn, err := Connect("pgschema")
+	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,7 +17,7 @@ func TestLoadTables(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tables, err := LoadTables(conn, conn.Schema)
+	tables, err := LoadTables(conn, conn.SchemaName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,18 +51,17 @@ func TestLoadColumn(t *testing.T) {
 }
 
 func runLoadColumn(t *testing.T, q string, c Column) {
-	conn, err := Connect("pgschema")
+	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer conn.Close()
-	schemaName := conn.Schema
 	tableName := "test"
 	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE %s (%s)`, tableName, q))
 	if err != nil {
 		t.Fatal(err)
 	}
-	cs, err := LoadColumns(conn, schemaName, tableName)
+	cs, err := LoadColumns(conn, conn.SchemaName, tableName)
 	if err != nil {
 		t.Fatal(err)
 	}

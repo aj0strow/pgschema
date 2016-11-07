@@ -2,6 +2,7 @@ package pgschema
 
 import (
 	"fmt"
+	"github.com/aj0strow/pgschema/temp"
 	"github.com/jackc/pgx"
 	"testing"
 )
@@ -19,7 +20,7 @@ func checkSyntax(pg PG, q string) error {
 }
 
 func TestChanges(t *testing.T) {
-	conn, err := Connect("pgschema")
+	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)
 	}
