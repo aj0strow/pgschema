@@ -72,35 +72,35 @@ func MatchTableNodes(a, b []TableNode) []TableMatch {
 	var tableMatches []TableMatch
 	fromA := map[string]bool{}
 	for _, nodeA := range a {
-		tableA := &nodeA.Table
+		tableA := nodeA.Table
 		tableName := tableA.TableName
 		fromA[tableName] = true
 		nodeB := findTableNode(b, tableName)
 		if nodeB != nil {
-			tableB := &nodeB.Table
+			tableB := nodeB.Table
 			columns := MatchColumnNodes(nodeA.ColumnNodes, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
-				A:             tableA,
-				B:             tableB,
+				A:             &tableA,
+				B:             &tableB,
 				ColumnMatches: columns,
 			})
 		} else {
 			columns := MatchColumnNodes(nodeA.ColumnNodes, nil)
 			tableMatches = append(tableMatches, TableMatch{
-				A:             tableA,
+				A:             &tableA,
 				B:             nil,
 				ColumnMatches: columns,
 			})
 		}
 	}
 	for _, nodeB := range b {
-		tableB := &nodeB.Table
+		tableB := nodeB.Table
 		tableName := tableB.TableName
 		if !fromA[tableName] {
 			columns := MatchColumnNodes(nil, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
 				A:             nil,
-				B:             tableB,
+				B:             &tableB,
 				ColumnMatches: columns,
 			})
 		}

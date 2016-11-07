@@ -142,3 +142,55 @@ func TestMatchColumnNodes(t *testing.T) {
 		}
 	}
 }
+
+func newTable(name string) Table {
+	return Table{
+		TableName: name,
+	}
+}
+
+func newTableNode(name string) TableNode {
+	return TableNode{
+		Table: newTable(name),
+	}
+}
+
+func ptrTable(name string) *Table {
+	table := newTable(name)
+	return &table
+}
+
+func TestMatchTableNodes(t *testing.T) {
+	type Test struct {
+		Name    string
+		A       []TableNode
+		B       []TableNode
+		Matches []TableMatch
+	}
+	tests := []Test{
+		Test{
+			"multiple tables",
+			[]TableNode{
+				newTableNode("users"),
+				newTableNode("passwords"),
+			},
+			nil,
+			[]TableMatch{
+				TableMatch{
+					A: ptrTable("users"),
+					B: nil,
+				},
+				TableMatch{
+					A: ptrTable("passwords"),
+					B: nil,
+				},
+			},
+		},
+	}
+	for _, test := range tests {
+		matches := MatchTableNodes(test.A, test.B)
+		if !reflect.DeepEqual(matches, test.Matches) {
+			t.Errorf("MatchTableNodes => %s", test.Name)
+		}
+	}
+}
