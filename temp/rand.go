@@ -1,12 +1,19 @@
 package temp
 
 import (
-	"fmt"
+	"math/rand"
 )
 
-var counter = 0
+const chars = "abcdefghijklmnopqrstwxyz"
+
+func init() {
+	rand.Seed(100)
+}
 
 func randSchemaName() string {
-	counter += 1
-	return fmt.Sprintf("db%d", counter)
+	b := make([]byte, 10)
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(b)
 }

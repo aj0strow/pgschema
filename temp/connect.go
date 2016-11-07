@@ -5,6 +5,9 @@ import (
 	"github.com/jackc/pgx"
 )
 
+const duplicateSchema = "42P06"
+const duplicateKey = "23505"
+
 type Conn struct {
 	*pgx.Conn
 	SchemaName string
@@ -19,9 +22,21 @@ func Connect(database string) (*Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	schema := randSchemaName()
-	_, err = conn.Exec(fmt.Sprintf(`CREATE SCHEMA %s`, schema))
-	if err != nil {
+	var schema string
+	for {
+		schema = randSchemaName()
+		_, err = conn.Exec(fmt.Sprintf(`CREATE SCHEMA %s`, schema))
+		if err == nil {
+			break
+		}
+		if pgErr, ok := err.(pgx.PgError); ok {
+			if pgErr.Code == duplicateSchema {
+				continue
+			}
+			if pgErr.Code == duplicateKey {
+				continue
+			}
+		}
 		return nil, err
 	}
 	_, err = conn.Exec(fmt.Sprintf(`SET search_path TO %s`, schema))
