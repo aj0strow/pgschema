@@ -1,6 +1,6 @@
 package pgschema
 
-func planSchema(schema SchemaMatch) []Change {
+func planSchemaMatch(schema SchemaMatch) []Change {
 	var cs []Change
 	tables := planTableMatches(schema.TableMatches)
 	cs = append(cs, tables...)

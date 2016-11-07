@@ -2,7 +2,6 @@ package pgschema
 
 // SchemaMatch is a combined schema with the new version A and old version B.
 type SchemaMatch struct {
-	SchemaName   string
 	A            *Schema
 	B            *Schema
 	TableMatches []TableMatch
@@ -10,7 +9,6 @@ type SchemaMatch struct {
 
 // TableMatch is a combined table with new version A and old version B.
 type TableMatch struct {
-	TableName     string
 	A             *Table
 	B             *Table
 	ColumnMatches []ColumnMatch
@@ -18,9 +16,8 @@ type TableMatch struct {
 
 // ColumnMatch is a combined column with new version A and old version B.
 type ColumnMatch struct {
-	ColumnName string
-	A          *Column
-	B          *Column
+	A *Column
+	B *Column
 }
 
 /*
@@ -83,7 +80,6 @@ func MatchTableNodes(a, b []TableNode) []TableMatch {
 			tableB := &nodeB.Table
 			columns := MatchColumnNodes(nodeA.ColumnNodes, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
-				TableName:     tableName,
 				A:             tableA,
 				B:             tableB,
 				ColumnMatches: columns,
@@ -91,7 +87,6 @@ func MatchTableNodes(a, b []TableNode) []TableMatch {
 		} else {
 			columns := MatchColumnNodes(nodeA.ColumnNodes, nil)
 			tableMatches = append(tableMatches, TableMatch{
-				TableName:     tableName,
 				A:             tableA,
 				B:             nil,
 				ColumnMatches: columns,
@@ -104,7 +99,6 @@ func MatchTableNodes(a, b []TableNode) []TableMatch {
 		if !fromA[tableName] {
 			columns := MatchColumnNodes(nil, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
-				TableName:     tableName,
 				A:             nil,
 				B:             tableB,
 				ColumnMatches: columns,
@@ -129,33 +123,30 @@ func MatchColumnNodes(a, b []ColumnNode) []ColumnMatch {
 	var columnMatches []ColumnMatch
 	fromA := map[string]bool{}
 	for _, nodeA := range a {
-		colA := &nodeA.Column
+		colA := nodeA.Column
 		columnName := colA.ColumnName
 		fromA[columnName] = true
 		nodeB := findColumnNode(b, columnName)
 		if nodeB != nil {
-			colB := &nodeB.Column
+			colB := nodeB.Column
 			columnMatches = append(columnMatches, ColumnMatch{
-				ColumnName: columnName,
-				A:          colA,
-				B:          colB,
+				A: &colA,
+				B: &colB,
 			})
 		} else {
 			columnMatches = append(columnMatches, ColumnMatch{
-				ColumnName: columnName,
-				A:          colA,
-				B:          nil,
+				A: &colA,
+				B: nil,
 			})
 		}
 	}
 	for _, nodeB := range b {
-		colB := &nodeB.Column
+		colB := nodeB.Column
 		columnName := colB.ColumnName
 		if !fromA[columnName] {
 			columnMatches = append(columnMatches, ColumnMatch{
-				ColumnName: columnName,
-				A:          nil,
-				B:          colB,
+				A: nil,
+				B: &colB,
 			})
 		}
 	}

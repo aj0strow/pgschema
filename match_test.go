@@ -98,9 +98,8 @@ func TestMatchColumnNodes(t *testing.T) {
 			nil,
 			[]ColumnMatch{
 				ColumnMatch{
-					ColumnName: "email",
-					A:          ptrColumn("email"),
-					B:          nil,
+					A: ptrColumn("email"),
+					B: nil,
 				},
 			},
 		},
@@ -112,9 +111,26 @@ func TestMatchColumnNodes(t *testing.T) {
 			},
 			[]ColumnMatch{
 				ColumnMatch{
-					ColumnName: "dob",
-					A:          nil,
-					B:          ptrColumn("dob"),
+					A: nil,
+					B: ptrColumn("dob"),
+				},
+			},
+		},
+		Test{
+			"multiple columns",
+			[]ColumnNode{
+				newColumnNode("one"),
+				newColumnNode("two"),
+			},
+			nil,
+			[]ColumnMatch{
+				ColumnMatch{
+					A: ptrColumn("one"),
+					B: nil,
+				},
+				ColumnMatch{
+					A: ptrColumn("two"),
+					B: nil,
 				},
 			},
 		},
