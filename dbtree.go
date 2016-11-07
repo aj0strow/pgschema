@@ -15,7 +15,7 @@ type TableNode struct {
 }
 
 type ColumnNode struct {
-	Column Column
+	Column info.Column
 }
 
 func LoadSchemaNode(pg PG, schema info.Schema) (SchemaNode, error) {
@@ -39,7 +39,7 @@ func LoadSchemaNode(pg PG, schema info.Schema) (SchemaNode, error) {
 }
 
 func LoadTableNode(pg PG, schema info.Schema, table info.Table) (TableNode, error) {
-	columns, err := LoadColumns(pg, schema.SchemaName, table.TableName)
+	columns, err := info.LoadColumns(pg, schema.SchemaName, table.TableName)
 	if err != nil {
 		return TableNode{}, err
 	}

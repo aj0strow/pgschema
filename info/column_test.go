@@ -1,4 +1,4 @@
-package pgschema
+package info
 
 import (
 	"fmt"

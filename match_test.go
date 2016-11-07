@@ -8,7 +8,7 @@ import (
 
 func newColumnNode(name string) ColumnNode {
 	return ColumnNode{
-		Column{
+		info.Column{
 			ColumnName: name,
 		},
 	}
@@ -19,8 +19,8 @@ func ptrColumnNode(name string) *ColumnNode {
 	return &node
 }
 
-func ptrColumn(name string) *Column {
-	return &Column{
+func ptrColumn(name string) *info.Column {
+	return &info.Column{
 		ColumnName: name,
 	}
 }

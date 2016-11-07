@@ -4,7 +4,6 @@ import (
 	"fmt"
 )
 
-// Table is a database table in the current search path.
 type Table struct {
 	TableName string
 }

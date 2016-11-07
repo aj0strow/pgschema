@@ -57,7 +57,7 @@ func TestPlanColumnMatch(t *testing.T) {
 			"drop old column",
 			ColumnMatch{
 				A: nil,
-				B: &Column{
+				B: &info.Column{
 					ColumnName: "email",
 				},
 			},
@@ -68,7 +68,7 @@ func TestPlanColumnMatch(t *testing.T) {
 		Test{
 			"add new column",
 			ColumnMatch{
-				A: &Column{
+				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "citext",
 				},
@@ -81,11 +81,11 @@ func TestPlanColumnMatch(t *testing.T) {
 		Test{
 			"change column type",
 			ColumnMatch{
-				A: &Column{
+				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "text",
 				},
-				B: &Column{
+				B: &info.Column{
 					ColumnName: "email",
 					DataType:   "citext",
 				},

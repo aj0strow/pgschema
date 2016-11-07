@@ -20,8 +20,8 @@ type TableMatch struct {
 
 // ColumnMatch is a combined column with new version A and old version B.
 type ColumnMatch struct {
-	A *Column
-	B *Column
+	A *info.Column
+	B *info.Column
 }
 
 /*
