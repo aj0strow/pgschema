@@ -1,7 +1,11 @@
 package pgschema
 
+import (
+	"github.com/aj0strow/pgschema/info"
+)
+
 type SchemaNode struct {
-	Schema     Schema
+	Schema     info.Schema
 	TableNodes []TableNode
 }
 
@@ -14,7 +18,7 @@ type ColumnNode struct {
 	Column Column
 }
 
-func LoadSchemaNode(pg PG, schema Schema) (SchemaNode, error) {
+func LoadSchemaNode(pg PG, schema info.Schema) (SchemaNode, error) {
 	tables, err := LoadTables(pg, schema.SchemaName)
 	if err != nil {
 		return SchemaNode{}, err
@@ -34,7 +38,7 @@ func LoadSchemaNode(pg PG, schema Schema) (SchemaNode, error) {
 	return schemaNode, nil
 }
 
-func LoadTableNode(pg PG, schema Schema, table Table) (TableNode, error) {
+func LoadTableNode(pg PG, schema info.Schema, table Table) (TableNode, error) {
 	columns, err := LoadColumns(pg, schema.SchemaName, table.TableName)
 	if err != nil {
 		return TableNode{}, err

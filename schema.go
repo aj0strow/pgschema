@@ -1,10 +1,5 @@
 package pgschema
 
-// Schema is a database catalog or schema.
-type Schema struct {
-	SchemaName string
-}
-
 // Table is a database table in the current search path.
 type Table struct {
 	TableName string

@@ -1,9 +1,13 @@
 package pgschema
 
+import (
+	"github.com/aj0strow/pgschema/info"
+)
+
 // SchemaMatch is a combined schema with the new version A and old version B.
 type SchemaMatch struct {
-	A            *Schema
-	B            *Schema
+	A            *info.Schema
+	B            *info.Schema
 	TableMatches []TableMatch
 }
 
