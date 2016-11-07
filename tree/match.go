@@ -1,4 +1,4 @@
-package pgschema
+package tree
 
 import (
 	"github.com/aj0strow/pgschema/info"

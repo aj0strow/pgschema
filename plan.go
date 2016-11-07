@@ -1,13 +1,17 @@
 package pgschema
 
-func planSchemaMatch(schema SchemaMatch) []Change {
+import (
+	"github.com/aj0strow/pgschema/tree"
+)
+
+func planSchemaMatch(schema tree.SchemaMatch) []Change {
 	var cs []Change
 	tables := planTableMatches(schema.TableMatches)
 	cs = append(cs, tables...)
 	return cs
 }
 
-func planTableMatches(tableMatches []TableMatch) []Change {
+func planTableMatches(tableMatches []tree.TableMatch) []Change {
 	var cs []Change
 	for _, tableMatch := range tableMatches {
 		tableChanges := planTableMatch(tableMatch)
@@ -16,7 +20,7 @@ func planTableMatches(tableMatches []TableMatch) []Change {
 	return cs
 }
 
-func planTableMatch(tableMatch TableMatch) []Change {
+func planTableMatch(tableMatch tree.TableMatch) []Change {
 	var cs []Change
 	a, b := tableMatch.A, tableMatch.B
 	if a == nil {
@@ -33,7 +37,7 @@ func planTableMatch(tableMatch TableMatch) []Change {
 	return cs
 }
 
-func planColumnMatches(columnMatches []ColumnMatch) []Change {
+func planColumnMatches(columnMatches []tree.ColumnMatch) []Change {
 	var cs []Change
 	for _, columnMatch := range columnMatches {
 		changes := planColumnMatch(columnMatch)
@@ -42,7 +46,7 @@ func planColumnMatches(columnMatches []ColumnMatch) []Change {
 	return cs
 }
 
-func planColumnMatch(columnMatch ColumnMatch) []Change {
+func planColumnMatch(columnMatch tree.ColumnMatch) []Change {
 	var cs []Change
 	a, b := columnMatch.A, columnMatch.B
 	if a == nil {

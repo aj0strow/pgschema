@@ -2,6 +2,7 @@ package pgschema
 
 import (
 	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
@@ -9,13 +10,13 @@ import (
 func TestPlanTableMatch(t *testing.T) {
 	type Test struct {
 		Name       string
-		TableMatch TableMatch
+		TableMatch tree.TableMatch
 		Changes    []Change
 	}
 	tests := []Test{
 		Test{
 			"create new table",
-			TableMatch{
+			tree.TableMatch{
 				A: &info.Table{
 					TableName: "users",
 				},
@@ -27,7 +28,7 @@ func TestPlanTableMatch(t *testing.T) {
 		},
 		Test{
 			"drop old table",
-			TableMatch{
+			tree.TableMatch{
 				A: nil,
 				B: &info.Table{
 					TableName: "customers",
@@ -49,13 +50,13 @@ func TestPlanTableMatch(t *testing.T) {
 func TestPlanColumnMatch(t *testing.T) {
 	type Test struct {
 		Name        string
-		ColumnMatch ColumnMatch
+		ColumnMatch tree.ColumnMatch
 		Changes     []Change
 	}
 	tests := []Test{
 		Test{
 			"drop old column",
-			ColumnMatch{
+			tree.ColumnMatch{
 				A: nil,
 				B: &info.Column{
 					ColumnName: "email",
@@ -67,7 +68,7 @@ func TestPlanColumnMatch(t *testing.T) {
 		},
 		Test{
 			"add new column",
-			ColumnMatch{
+			tree.ColumnMatch{
 				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "citext",
@@ -80,7 +81,7 @@ func TestPlanColumnMatch(t *testing.T) {
 		},
 		Test{
 			"change column type",
-			ColumnMatch{
+			tree.ColumnMatch{
 				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "text",
