@@ -31,7 +31,7 @@ func TestChanges(t *testing.T) {
 	defer conn.Close()
 
 	changes := []Change{
-		CreateSchema{"v1"},
+		CreateSchema{conn.SchemaName},
 		CreateTable{"users"},
 		DropTable{"customers"},
 		AlterTable{

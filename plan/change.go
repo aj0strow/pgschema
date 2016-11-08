@@ -17,6 +17,8 @@ func (cs CreateSchema) String() string {
 	return fmt.Sprintf(`CREATE SCHEMA %s`, cs.SchemaName)
 }
 
+var _ Change = (*CreateSchema)(nil)
+
 // Create a new table. This change occurs when you have a table name in
 // the new schema with no match in the old schema.
 type CreateTable struct {
