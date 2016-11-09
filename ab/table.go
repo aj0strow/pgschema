@@ -1,14 +1,14 @@
 package ab
 
 import (
-	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/tree"
 )
 
 // TableMatch is a combined table with new version A and old version B.
 type TableMatch struct {
-	A             *info.Table
-	B             *info.Table
+	A             *db.Table
+	B             *db.Table
 	ColumnMatches []ColumnMatch
 }
 

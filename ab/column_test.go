@@ -1,7 +1,7 @@
 package ab
 
 import (
-	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
@@ -9,7 +9,7 @@ import (
 
 func newColumnNode(name string) tree.ColumnNode {
 	return tree.ColumnNode{
-		info.Column{
+		db.Column{
 			ColumnName: name,
 		},
 	}
@@ -20,8 +20,8 @@ func ptrColumnNode(name string) *tree.ColumnNode {
 	return &node
 }
 
-func ptrColumn(name string) *info.Column {
-	return &info.Column{
+func ptrColumn(name string) *db.Column {
+	return &db.Column{
 		ColumnName: name,
 	}
 }

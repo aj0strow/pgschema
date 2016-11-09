@@ -1,14 +1,14 @@
 package ab
 
 import (
-	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/tree"
 )
 
 // ColumnMatch is a combined column with new version A and old version B.
 type ColumnMatch struct {
-	A *info.Column
-	B *info.Column
+	A *db.Column
+	B *db.Column
 }
 
 // MatchColumnNodes takes separate column node lists, and combines

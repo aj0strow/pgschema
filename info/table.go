@@ -2,13 +2,10 @@ package info
 
 import (
 	"fmt"
+	"github.com/aj0strow/pgschema/db"
 )
 
-type Table struct {
-	TableName string
-}
-
-func LoadTables(db Conn, schemaName string) ([]Table, error) {
+func LoadTables(conn Conn, schemaName string) ([]db.Table, error) {
 	q := fmt.Sprintf(`
 		SELECT table_name
 		FROM information_schema.tables
@@ -16,14 +13,14 @@ func LoadTables(db Conn, schemaName string) ([]Table, error) {
 		AND table_type = 'BASE TABLE'
 		ORDER BY table_name ASC
 	`, schemaName)
-	rows, err := db.Query(q)
+	rows, err := conn.Query(q)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	tables := []Table{}
+	tables := []db.Table{}
 	for rows.Next() {
-		table := Table{}
+		table := db.Table{}
 		rows.Scan(&table.TableName)
 		tables = append(tables, table)
 	}

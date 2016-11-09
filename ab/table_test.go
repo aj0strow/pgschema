@@ -1,14 +1,14 @@
 package ab
 
 import (
-	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
 
-func newTable(name string) info.Table {
-	return info.Table{
+func newTable(name string) db.Table {
+	return db.Table{
 		TableName: name,
 	}
 }
@@ -19,7 +19,7 @@ func newTableNode(name string) tree.TableNode {
 	}
 }
 
-func ptrTable(name string) *info.Table {
+func ptrTable(name string) *db.Table {
 	table := newTable(name)
 	return &table
 }

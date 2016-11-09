@@ -3,7 +3,6 @@ package hcl
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/info"
 	"github.com/aj0strow/pgschema/tree"
 	"github.com/hashicorp/hcl"
 )
@@ -63,7 +62,7 @@ func convertTable(k string, v Table) tree.TableNode {
 		columns = append(columns, convertColumn(ck, cv))
 	}
 	return tree.TableNode{
-		Table: info.Table{
+		Table: db.Table{
 			TableName: k,
 		},
 		ColumnNodes: columns,
@@ -72,7 +71,7 @@ func convertTable(k string, v Table) tree.TableNode {
 
 func convertColumn(k string, v Column) tree.ColumnNode {
 	return tree.ColumnNode{
-		Column: info.Column{
+		Column: db.Column{
 			ColumnName: k,
 			DataType:   v.Type,
 		},

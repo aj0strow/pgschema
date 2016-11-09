@@ -2,7 +2,7 @@ package plan
 
 import (
 	"github.com/aj0strow/pgschema/ab"
-	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/db"
 	"reflect"
 	"testing"
 )
@@ -18,7 +18,7 @@ func TestColumnChanges(t *testing.T) {
 			"drop old column",
 			ab.ColumnMatch{
 				A: nil,
-				B: &info.Column{
+				B: &db.Column{
 					ColumnName: "email",
 				},
 			},
@@ -29,7 +29,7 @@ func TestColumnChanges(t *testing.T) {
 		Test{
 			"add new column",
 			ab.ColumnMatch{
-				A: &info.Column{
+				A: &db.Column{
 					ColumnName: "email",
 					DataType:   "citext",
 				},
@@ -42,11 +42,11 @@ func TestColumnChanges(t *testing.T) {
 		Test{
 			"change column type",
 			ab.ColumnMatch{
-				A: &info.Column{
+				A: &db.Column{
 					ColumnName: "email",
 					DataType:   "text",
 				},
-				B: &info.Column{
+				B: &db.Column{
 					ColumnName: "email",
 					DataType:   "citext",
 				},

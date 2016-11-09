@@ -1,6 +1,7 @@
 package info
 
 import (
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/temp"
 	"reflect"
 	"testing"
@@ -20,8 +21,8 @@ func TestLoadTables(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := []Table{
-		Table{
+	expected := []db.Table{
+		db.Table{
 			TableName: "users",
 		},
 	}

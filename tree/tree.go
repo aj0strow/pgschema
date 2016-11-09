@@ -2,7 +2,6 @@ package tree
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/info"
 )
 
 type DatabaseNode struct {
@@ -15,10 +14,10 @@ type SchemaNode struct {
 }
 
 type TableNode struct {
-	Table       info.Table
+	Table       db.Table
 	ColumnNodes []ColumnNode
 }
 
 type ColumnNode struct {
-	Column info.Column
+	Column db.Column
 }

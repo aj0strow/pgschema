@@ -2,6 +2,7 @@ package info
 
 import (
 	"fmt"
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/temp"
 	"reflect"
 	"testing"
@@ -10,12 +11,12 @@ import (
 func TestLoadColumn(t *testing.T) {
 	type Test struct {
 		Query  string
-		Column Column
+		Column db.Column
 	}
 	tests := []Test{
 		Test{
 			`name text`,
-			Column{
+			db.Column{
 				ColumnName: "name",
 				DataType:   "text",
 			},
@@ -26,7 +27,7 @@ func TestLoadColumn(t *testing.T) {
 	}
 }
 
-func runLoadColumn(t *testing.T, q string, c Column) {
+func runLoadColumn(t *testing.T, q string, c db.Column) {
 	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)

@@ -2,7 +2,6 @@ package hcl
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/info"
 	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
@@ -30,12 +29,12 @@ schema "public" {
 	`
 	tables = []tree.TableNode{
 		tree.TableNode{
-			Table: info.Table{
+			Table: db.Table{
 				TableName: "users",
 			},
 			ColumnNodes: []tree.ColumnNode{
 				tree.ColumnNode{
-					Column: info.Column{
+					Column: db.Column{
 						ColumnName: "email",
 						DataType:   "text",
 					},
@@ -131,7 +130,7 @@ func TestConvertSchema(t *testing.T) {
 				},
 				TableNodes: []tree.TableNode{
 					tree.TableNode{
-						Table: info.Table{
+						Table: db.Table{
 							TableName: "users",
 						},
 					},
@@ -160,7 +159,7 @@ func TestConvertTable(t *testing.T) {
 			"users",
 			Table{},
 			tree.TableNode{
-				Table: info.Table{
+				Table: db.Table{
 					TableName: "users",
 				},
 			},
@@ -175,12 +174,12 @@ func TestConvertTable(t *testing.T) {
 				},
 			},
 			tree.TableNode{
-				Table: info.Table{
+				Table: db.Table{
 					TableName: "customers",
 				},
 				ColumnNodes: []tree.ColumnNode{
 					tree.ColumnNode{
-						Column: info.Column{
+						Column: db.Column{
 							ColumnName: "email",
 							DataType:   "text",
 						},
@@ -211,7 +210,7 @@ func TestConvertColumn(t *testing.T) {
 				Type: "text",
 			},
 			tree.ColumnNode{
-				Column: info.Column{
+				Column: db.Column{
 					ColumnName: "email",
 					DataType:   "text",
 				},

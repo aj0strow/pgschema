@@ -7,14 +7,14 @@ import (
 	"github.com/aj0strow/pgschema/tree"
 )
 
-func LoadDatabaseNode(db info.Conn) (tree.DatabaseNode, error) {
-	schemas, err := info.LoadSchemas(db)
+func LoadDatabaseNode(conn info.Conn) (tree.DatabaseNode, error) {
+	schemas, err := info.LoadSchemas(conn)
 	if err != nil {
 		return tree.DatabaseNode{}, err
 	}
 	var schemaNodes []tree.SchemaNode
 	for _, schema := range schemas {
-		schemaNode, err := LoadSchemaNode(db, schema)
+		schemaNode, err := LoadSchemaNode(conn, schema)
 		if err != nil {
 			return tree.DatabaseNode{}, err
 		}
@@ -26,14 +26,14 @@ func LoadDatabaseNode(db info.Conn) (tree.DatabaseNode, error) {
 	return databaseNode, nil
 }
 
-func LoadSchemaNode(db info.Conn, schema db.Schema) (tree.SchemaNode, error) {
-	tables, err := info.LoadTables(db, schema.SchemaName)
+func LoadSchemaNode(conn info.Conn, schema db.Schema) (tree.SchemaNode, error) {
+	tables, err := info.LoadTables(conn, schema.SchemaName)
 	if err != nil {
 		return tree.SchemaNode{}, err
 	}
 	var tableNodes []tree.TableNode
 	for _, table := range tables {
-		tableNode, err := LoadTableNode(db, schema, table)
+		tableNode, err := LoadTableNode(conn, schema, table)
 		if err != nil {
 			return tree.SchemaNode{}, err
 		}
@@ -46,8 +46,8 @@ func LoadSchemaNode(db info.Conn, schema db.Schema) (tree.SchemaNode, error) {
 	return schemaNode, nil
 }
 
-func LoadTableNode(db info.Conn, schema db.Schema, table info.Table) (tree.TableNode, error) {
-	columns, err := info.LoadColumns(db, schema.SchemaName, table.TableName)
+func LoadTableNode(conn info.Conn, schema db.Schema, table db.Table) (tree.TableNode, error) {
+	columns, err := info.LoadColumns(conn, schema.SchemaName, table.TableName)
 	if err != nil {
 		return tree.TableNode{}, err
 	}
