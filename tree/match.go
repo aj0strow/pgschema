@@ -4,6 +4,10 @@ import (
 	"github.com/aj0strow/pgschema/info"
 )
 
+type DatabaseMatch struct {
+	SchemaMatches []SchemaMatch
+}
+
 // SchemaMatch is a combined schema with the new version A and old version B.
 type SchemaMatch struct {
 	A            *info.Schema
@@ -24,54 +28,61 @@ type ColumnMatch struct {
 	B *info.Column
 }
 
-/*
+func Match(a, b DatabaseNode) DatabaseMatch {
+	return DatabaseMatch{
+		SchemaMatches: MatchSchemaNodes(a.SchemaNodes, b.SchemaNodes),
+	}
+}
+
+// MatchSchemaNodes takes separate SchemaNode lists, and deep
+// merges them into one combined SchemaMatch list.
 func MatchSchemaNodes(a, b []SchemaNode) []SchemaMatch {
 	var schemaMatches []SchemaMatch
 	var fromA map[string]bool
 	for _, nodeA := range a {
-		schemaA := &nodeA.Schema
+		schemaA := nodeA.Schema
 		schemaName := schemaA.SchemaName
 		fromA[schemaName] = true
 		nodeB := findSchemaNode(b, schemaName)
 		if nodeB != nil {
-			schemaB := &nodeB.Schema
-			tables := MatchTableNodes(nodeA.TableNodes, nodeB.TableNodes)
+			schemaB := nodeB.Schema
 			schemaMatches = append(schemaMatches, SchemaMatch{
-				SchemaName: schemaName,
-				A: schemaA,
-				B: schemaB,
-				TableMatches: tables,
+				A:            &schemaA,
+				B:            &schemaB,
+				TableMatches: MatchTableNodes(nodeA.TableNodes, nodeB.TableNodes),
 			})
 		} else {
-			tables = MatchTableNodes(nodeA.TableNodes, nil)
 			schemaMatches = append(schemaMatches, SchemaMatch{
-				TableName: tableName,
-				A: schemaA,
-				B: nil,
-				TableMatches: tables,
+				A:            &schemaA,
+				B:            nil,
+				TableMatches: MatchTableNodes(nodeA.TableNodes, nil),
 			})
 		}
 	}
 	for _, nodeB := range b {
-		schemaB := &nodeB.Schema
-		schemaName := schemaB.SchemaName
-		if !fromA[schemaName] {
+		schemaB := nodeB.Schema
+		if !fromA[schemaB.SchemaName] {
 			schemaMatches = append(schemaMatches, SchemaMatch{
-				SchemaName: schemaName,
-				A: nil,
-				B: schemaB,
-				TableMatches: tables,
+				A:            nil,
+				B:            &schemaB,
+				TableMatches: MatchTableNodes(nil, nodeB.TableNodes),
 			})
 		}
 	}
 	return schemaMatches
 }
 
-func findSchemaNode()
-*/
+func findSchemaNode(nodes []SchemaNode, name string) *SchemaNode {
+	for _, node := range nodes {
+		if node.Schema.SchemaName == name {
+			return &node
+		}
+	}
+	return nil
+}
 
-// MatchTableNodes takes separate TableNode lists, and combines them
-// by table name.
+// MatchTableNodes takes separate TableNode lists, and deep merges them
+// by table name into one combined TableMatch list.
 func MatchTableNodes(a, b []TableNode) []TableMatch {
 	var tableMatches []TableMatch
 	fromA := map[string]bool{}

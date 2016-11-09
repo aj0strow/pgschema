@@ -1,3 +1,4 @@
+// The psql package queries postgres meta tables to create a database tree.
 package psql
 
 import (

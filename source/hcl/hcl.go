@@ -1,3 +1,4 @@
+// The hcl package parses an input configuration file to create a database tree.
 package hcl
 
 import (

@@ -4,6 +4,15 @@ import (
 	"github.com/aj0strow/pgschema/tree"
 )
 
+func planDatabaseMatch(database tree.DatabaseMatch) []Change {
+	var cs []Change
+	for _, schemaMatch := range database.SchemaMatches {
+		schemaChanges := planSchemaMatch(schemaMatch)
+		cs = append(cs, schemaChanges...)
+	}
+	return cs
+}
+
 func planSchemaMatch(schema tree.SchemaMatch) []Change {
 	var cs []Change
 	tables := planTableMatches(schema.TableMatches)

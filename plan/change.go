@@ -9,6 +9,8 @@ type Change interface {
 	String() string
 }
 
+// Create a new schema. This change occurs when you have a schema
+// but it doesn't exist in the database yet.
 type CreateSchema struct {
 	SchemaName string
 }
