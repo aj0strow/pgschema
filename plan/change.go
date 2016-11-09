@@ -9,6 +9,7 @@ type Change interface {
 	String() string
 }
 
+// The search path needs to be updated depending on the active schema.
 type SetSearchPath struct {
 	SchemaName string
 }
@@ -18,6 +19,28 @@ func (sp SetSearchPath) String() string {
 }
 
 var _ Change = (*SetSearchPath)(nil)
+
+// Create a missing extension.
+type CreateExtension struct {
+	ExtName string
+}
+
+func (ce CreateExtension) String() string {
+	return fmt.Sprintf(`CREATE EXTENSION "%s"`, ce.ExtName)
+}
+
+var _ Change = (*CreateExtension)(nil)
+
+// Drop existing extension.
+type DropExtension struct {
+	ExtName string
+}
+
+func (de DropExtension) String() string {
+	return fmt.Sprintf(`DROP EXTENSION "%s"`, de.ExtName)
+}
+
+var _ Change = (*DropExtension)(nil)
 
 // Create a new schema. This change occurs when you have a schema
 // but it doesn't exist in the database yet.

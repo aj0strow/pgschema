@@ -5,11 +5,13 @@ import (
 )
 
 type DatabaseMatch struct {
-	SchemaMatches []SchemaMatch
+	ExtensionMatches []ExtensionMatch
+	SchemaMatches    []SchemaMatch
 }
 
 func MatchDatabase(a, b db.DatabaseNode) DatabaseMatch {
 	return DatabaseMatch{
-		SchemaMatches: MatchSchemas(a.SchemaNodes, b.SchemaNodes),
+		ExtensionMatches: MatchExtensions(a.ExtensionNodes, b.ExtensionNodes),
+		SchemaMatches:    MatchSchemas(a.SchemaNodes, b.SchemaNodes),
 	}
 }
