@@ -2,7 +2,6 @@ package ab
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 )
 
 // ColumnMatch is a combined column with new version A and old version B.
@@ -13,7 +12,7 @@ type ColumnMatch struct {
 
 // MatchColumnNodes takes separate column node lists, and combines
 // them by column name.
-func MatchColumns(a, b []tree.ColumnNode) []ColumnMatch {
+func MatchColumns(a, b []db.ColumnNode) []ColumnMatch {
 	var columnMatches []ColumnMatch
 	fromA := map[string]bool{}
 	for _, nodeA := range a {
@@ -47,7 +46,7 @@ func MatchColumns(a, b []tree.ColumnNode) []ColumnMatch {
 	return columnMatches
 }
 
-func findColumnNode(nodes []tree.ColumnNode, name string) *tree.ColumnNode {
+func findColumnNode(nodes []db.ColumnNode, name string) *db.ColumnNode {
 	for _, node := range nodes {
 		if node.Column.ColumnName == name {
 			return &node

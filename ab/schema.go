@@ -2,7 +2,6 @@ package ab
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 )
 
 // SchemaMatch is a combined schema with the new version A and old version B.
@@ -14,7 +13,7 @@ type SchemaMatch struct {
 
 // MatchSchemaNodes takes separate SchemaNode lists, and deep
 // merges them into one combined SchemaMatch list.
-func MatchSchemas(a, b []tree.SchemaNode) []SchemaMatch {
+func MatchSchemas(a, b []db.SchemaNode) []SchemaMatch {
 	var schemaMatches []SchemaMatch
 	var fromA map[string]bool
 	for _, nodeA := range a {
@@ -50,7 +49,7 @@ func MatchSchemas(a, b []tree.SchemaNode) []SchemaMatch {
 	return schemaMatches
 }
 
-func findSchemaNode(nodes []tree.SchemaNode, name string) *tree.SchemaNode {
+func findSchemaNode(nodes []db.SchemaNode, name string) *db.SchemaNode {
 	for _, node := range nodes {
 		if node.Schema.SchemaName == name {
 			return &node

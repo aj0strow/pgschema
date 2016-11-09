@@ -1,63 +1,62 @@
-// The psql package queries postgres meta tables to create a database tree.
+// The psql package queries postgres meta tables to create a database db.
 package psql
 
 import (
 	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/info"
-	"github.com/aj0strow/pgschema/tree"
 )
 
-func LoadDatabaseNode(conn info.Conn) (tree.DatabaseNode, error) {
+func LoadDatabaseNode(conn info.Conn) (db.DatabaseNode, error) {
 	schemas, err := info.LoadSchemas(conn)
 	if err != nil {
-		return tree.DatabaseNode{}, err
+		return db.DatabaseNode{}, err
 	}
-	var schemaNodes []tree.SchemaNode
+	var schemaNodes []db.SchemaNode
 	for _, schema := range schemas {
 		schemaNode, err := LoadSchemaNode(conn, schema)
 		if err != nil {
-			return tree.DatabaseNode{}, err
+			return db.DatabaseNode{}, err
 		}
 		schemaNodes = append(schemaNodes, schemaNode)
 	}
-	databaseNode := tree.DatabaseNode{
+	databaseNode := db.DatabaseNode{
 		SchemaNodes: schemaNodes,
 	}
 	return databaseNode, nil
 }
 
-func LoadSchemaNode(conn info.Conn, schema db.Schema) (tree.SchemaNode, error) {
+func LoadSchemaNode(conn info.Conn, schema db.Schema) (db.SchemaNode, error) {
 	tables, err := info.LoadTables(conn, schema.SchemaName)
 	if err != nil {
-		return tree.SchemaNode{}, err
+		return db.SchemaNode{}, err
 	}
-	var tableNodes []tree.TableNode
+	var tableNodes []db.TableNode
 	for _, table := range tables {
 		tableNode, err := LoadTableNode(conn, schema, table)
 		if err != nil {
-			return tree.SchemaNode{}, err
+			return db.SchemaNode{}, err
 		}
 		tableNodes = append(tableNodes, tableNode)
 	}
-	schemaNode := tree.SchemaNode{
+	schemaNode := db.SchemaNode{
 		Schema:     schema,
 		TableNodes: tableNodes,
 	}
 	return schemaNode, nil
 }
 
-func LoadTableNode(conn info.Conn, schema db.Schema, table db.Table) (tree.TableNode, error) {
+func LoadTableNode(conn info.Conn, schema db.Schema, table db.Table) (db.TableNode, error) {
 	columns, err := info.LoadColumns(conn, schema.SchemaName, table.TableName)
 	if err != nil {
-		return tree.TableNode{}, err
+		return db.TableNode{}, err
 	}
-	var columnNodes []tree.ColumnNode
+	var columnNodes []db.ColumnNode
 	for _, column := range columns {
-		columnNodes = append(columnNodes, tree.ColumnNode{
+		columnNodes = append(columnNodes, db.ColumnNode{
 			Column: column,
 		})
 	}
-	tableNode := tree.TableNode{
+	tableNode := db.TableNode{
 		Table:       table,
 		ColumnNodes: columnNodes,
 	}

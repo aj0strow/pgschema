@@ -1,23 +1,19 @@
-package tree
-
-import (
-	"github.com/aj0strow/pgschema/db"
-)
+package db
 
 type DatabaseNode struct {
 	SchemaNodes []SchemaNode
 }
 
 type SchemaNode struct {
-	Schema     db.Schema
+	Schema     Schema
 	TableNodes []TableNode
 }
 
 type TableNode struct {
-	Table       db.Table
+	Table       Table
 	ColumnNodes []ColumnNode
 }
 
 type ColumnNode struct {
-	Column db.Column
+	Column Column
 }

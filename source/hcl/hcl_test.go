@@ -2,7 +2,6 @@ package hcl
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
@@ -10,13 +9,13 @@ import (
 func TestParseBytes(t *testing.T) {
 	type Test struct {
 		Input        string
-		DatabaseNode tree.DatabaseNode
+		DatabaseNode db.DatabaseNode
 	}
 	var (
 		tests    []Test
 		input    string
-		database tree.DatabaseNode
-		tables   []tree.TableNode
+		database db.DatabaseNode
+		tables   []db.TableNode
 	)
 	input = `
 schema "public" {
@@ -27,13 +26,13 @@ schema "public" {
 	}
 }
 	`
-	tables = []tree.TableNode{
-		tree.TableNode{
+	tables = []db.TableNode{
+		db.TableNode{
 			Table: db.Table{
 				TableName: "users",
 			},
-			ColumnNodes: []tree.ColumnNode{
-				tree.ColumnNode{
+			ColumnNodes: []db.ColumnNode{
+				db.ColumnNode{
 					Column: db.Column{
 						ColumnName: "email",
 						DataType:   "text",
@@ -42,9 +41,9 @@ schema "public" {
 			},
 		},
 	}
-	database = tree.DatabaseNode{
-		SchemaNodes: []tree.SchemaNode{
-			tree.SchemaNode{
+	database = db.DatabaseNode{
+		SchemaNodes: []db.SchemaNode{
+			db.SchemaNode{
 				Schema: db.Schema{
 					SchemaName: "public",
 				},
@@ -68,12 +67,12 @@ schema "public" {
 func TestConvertDatabase(t *testing.T) {
 	type Test struct {
 		Value        Database
-		DatabaseNode tree.DatabaseNode
+		DatabaseNode db.DatabaseNode
 	}
 	tests := []Test{
 		Test{
 			Database{},
-			tree.DatabaseNode{},
+			db.DatabaseNode{},
 		},
 		Test{
 			Database{
@@ -81,9 +80,9 @@ func TestConvertDatabase(t *testing.T) {
 					"public": Schema{},
 				},
 			},
-			tree.DatabaseNode{
-				SchemaNodes: []tree.SchemaNode{
-					tree.SchemaNode{
+			db.DatabaseNode{
+				SchemaNodes: []db.SchemaNode{
+					db.SchemaNode{
 						Schema: db.Schema{
 							SchemaName: "public",
 						},
@@ -105,13 +104,13 @@ func TestConvertSchema(t *testing.T) {
 	type Test struct {
 		Key        string
 		Value      Schema
-		SchemaNode tree.SchemaNode
+		SchemaNode db.SchemaNode
 	}
 	tests := []Test{
 		Test{
 			"public",
 			Schema{},
-			tree.SchemaNode{
+			db.SchemaNode{
 				Schema: db.Schema{
 					SchemaName: "public",
 				},
@@ -124,12 +123,12 @@ func TestConvertSchema(t *testing.T) {
 					"users": Table{},
 				},
 			},
-			tree.SchemaNode{
+			db.SchemaNode{
 				Schema: db.Schema{
 					SchemaName: "public",
 				},
-				TableNodes: []tree.TableNode{
-					tree.TableNode{
+				TableNodes: []db.TableNode{
+					db.TableNode{
 						Table: db.Table{
 							TableName: "users",
 						},
@@ -152,13 +151,13 @@ func TestConvertTable(t *testing.T) {
 	type Test struct {
 		Key       string
 		Value     Table
-		TableNode tree.TableNode
+		TableNode db.TableNode
 	}
 	tests := []Test{
 		Test{
 			"users",
 			Table{},
-			tree.TableNode{
+			db.TableNode{
 				Table: db.Table{
 					TableName: "users",
 				},
@@ -173,12 +172,12 @@ func TestConvertTable(t *testing.T) {
 					},
 				},
 			},
-			tree.TableNode{
+			db.TableNode{
 				Table: db.Table{
 					TableName: "customers",
 				},
-				ColumnNodes: []tree.ColumnNode{
-					tree.ColumnNode{
+				ColumnNodes: []db.ColumnNode{
+					db.ColumnNode{
 						Column: db.Column{
 							ColumnName: "email",
 							DataType:   "text",
@@ -201,7 +200,7 @@ func TestConvertColumn(t *testing.T) {
 	type Test struct {
 		Key        string
 		Value      Column
-		ColumnNode tree.ColumnNode
+		ColumnNode db.ColumnNode
 	}
 	tests := []Test{
 		Test{
@@ -209,7 +208,7 @@ func TestConvertColumn(t *testing.T) {
 			Column{
 				Type: "text",
 			},
-			tree.ColumnNode{
+			db.ColumnNode{
 				Column: db.Column{
 					ColumnName: "email",
 					DataType:   "text",

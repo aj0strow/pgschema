@@ -2,7 +2,6 @@ package ab
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
@@ -13,8 +12,8 @@ func newTable(name string) db.Table {
 	}
 }
 
-func newTableNode(name string) tree.TableNode {
-	return tree.TableNode{
+func newTableNode(name string) db.TableNode {
+	return db.TableNode{
 		Table: newTable(name),
 	}
 }
@@ -27,14 +26,14 @@ func ptrTable(name string) *db.Table {
 func TestMatchTableNodes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []tree.TableNode
-		B       []tree.TableNode
+		A       []db.TableNode
+		B       []db.TableNode
 		Matches []TableMatch
 	}
 	tests := []Test{
 		Test{
 			"multiple tables",
-			[]tree.TableNode{
+			[]db.TableNode{
 				newTableNode("users"),
 				newTableNode("passwords"),
 			},

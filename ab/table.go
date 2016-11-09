@@ -2,7 +2,6 @@ package ab
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 )
 
 // TableMatch is a combined table with new version A and old version B.
@@ -14,7 +13,7 @@ type TableMatch struct {
 
 // MatchTableNodes takes separate TableNode lists, and deep merges them
 // by table name into one combined TableMatch list.
-func MatchTables(a, b []tree.TableNode) []TableMatch {
+func MatchTables(a, b []db.TableNode) []TableMatch {
 	var tableMatches []TableMatch
 	fromA := map[string]bool{}
 	for _, nodeA := range a {
@@ -54,7 +53,7 @@ func MatchTables(a, b []tree.TableNode) []TableMatch {
 	return tableMatches
 }
 
-func findTableNode(nodes []tree.TableNode, name string) *tree.TableNode {
+func findTableNode(nodes []db.TableNode, name string) *db.TableNode {
 	for _, node := range nodes {
 		if node.Table.TableName == name {
 			return &node

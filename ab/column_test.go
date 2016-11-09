@@ -2,20 +2,19 @@ package ab
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
 
-func newColumnNode(name string) tree.ColumnNode {
-	return tree.ColumnNode{
+func newColumnNode(name string) db.ColumnNode {
+	return db.ColumnNode{
 		db.Column{
 			ColumnName: name,
 		},
 	}
 }
 
-func ptrColumnNode(name string) *tree.ColumnNode {
+func ptrColumnNode(name string) *db.ColumnNode {
 	node := newColumnNode(name)
 	return &node
 }
@@ -29,9 +28,9 @@ func ptrColumn(name string) *db.Column {
 func TestFindColumNode(t *testing.T) {
 	type Test struct {
 		Name        string
-		ColumnNodes []tree.ColumnNode
+		ColumnNodes []db.ColumnNode
 		SearchName  string
-		Found       *tree.ColumnNode
+		Found       *db.ColumnNode
 	}
 	tests := []Test{
 		Test{
@@ -42,13 +41,13 @@ func TestFindColumNode(t *testing.T) {
 		},
 		Test{
 			`empty column list`,
-			[]tree.ColumnNode{},
+			[]db.ColumnNode{},
 			"test1",
 			nil,
 		},
 		Test{
 			`wrong name`,
-			[]tree.ColumnNode{
+			[]db.ColumnNode{
 				newColumnNode("test2"),
 			},
 			"test1",
@@ -56,7 +55,7 @@ func TestFindColumNode(t *testing.T) {
 		},
 		Test{
 			`correct name`,
-			[]tree.ColumnNode{
+			[]db.ColumnNode{
 				newColumnNode("test1"),
 				newColumnNode("test2"),
 			},
@@ -75,8 +74,8 @@ func TestFindColumNode(t *testing.T) {
 func TestMatchColumnNodes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []tree.ColumnNode
-		B       []tree.ColumnNode
+		A       []db.ColumnNode
+		B       []db.ColumnNode
 		Matches []ColumnMatch
 	}
 	tests := []Test{
@@ -88,13 +87,13 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 		Test{
 			"empty column node lists",
-			[]tree.ColumnNode{},
-			[]tree.ColumnNode{},
+			[]db.ColumnNode{},
+			[]db.ColumnNode{},
 			nil,
 		},
 		Test{
 			"columns in a only",
-			[]tree.ColumnNode{
+			[]db.ColumnNode{
 				newColumnNode("email"),
 			},
 			nil,
@@ -108,7 +107,7 @@ func TestMatchColumnNodes(t *testing.T) {
 		Test{
 			"columns in b only",
 			nil,
-			[]tree.ColumnNode{
+			[]db.ColumnNode{
 				newColumnNode("dob"),
 			},
 			[]ColumnMatch{
@@ -120,7 +119,7 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 		Test{
 			"multiple columns",
-			[]tree.ColumnNode{
+			[]db.ColumnNode{
 				newColumnNode("one"),
 				newColumnNode("two"),
 			},

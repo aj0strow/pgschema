@@ -1,9 +1,8 @@
-// The hcl package parses an input configuration file to create a database tree.
+// The hcl package parses an input configuration file to create a database db.
 package hcl
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/tree"
 	"github.com/hashicorp/hcl"
 )
 
@@ -23,32 +22,32 @@ type Column struct {
 	Type string
 }
 
-func ParseBytes(bs []byte) (tree.DatabaseNode, error) {
-	var db Database
-	err := hcl.Unmarshal(bs, &db)
+func ParseBytes(bs []byte) (db.DatabaseNode, error) {
+	var database Database
+	err := hcl.Unmarshal(bs, &database)
 	if err != nil {
-		return tree.DatabaseNode{}, err
+		return db.DatabaseNode{}, err
 	}
-	databaseNode := convertDatabase(db)
+	databaseNode := convertDatabase(database)
 	return databaseNode, nil
 }
 
-func convertDatabase(v Database) tree.DatabaseNode {
-	var schemas []tree.SchemaNode
+func convertDatabase(v Database) db.DatabaseNode {
+	var schemas []db.SchemaNode
 	for sk, sv := range v.Schema {
 		schemas = append(schemas, convertSchema(sk, sv))
 	}
-	return tree.DatabaseNode{
+	return db.DatabaseNode{
 		SchemaNodes: schemas,
 	}
 }
 
-func convertSchema(k string, v Schema) tree.SchemaNode {
-	var tables []tree.TableNode
+func convertSchema(k string, v Schema) db.SchemaNode {
+	var tables []db.TableNode
 	for tk, tv := range v.Table {
 		tables = append(tables, convertTable(tk, tv))
 	}
-	return tree.SchemaNode{
+	return db.SchemaNode{
 		Schema: db.Schema{
 			SchemaName: k,
 		},
@@ -56,12 +55,12 @@ func convertSchema(k string, v Schema) tree.SchemaNode {
 	}
 }
 
-func convertTable(k string, v Table) tree.TableNode {
-	var columns []tree.ColumnNode
+func convertTable(k string, v Table) db.TableNode {
+	var columns []db.ColumnNode
 	for ck, cv := range v.Column {
 		columns = append(columns, convertColumn(ck, cv))
 	}
-	return tree.TableNode{
+	return db.TableNode{
 		Table: db.Table{
 			TableName: k,
 		},
@@ -69,8 +68,8 @@ func convertTable(k string, v Table) tree.TableNode {
 	}
 }
 
-func convertColumn(k string, v Column) tree.ColumnNode {
-	return tree.ColumnNode{
+func convertColumn(k string, v Column) db.ColumnNode {
+	return db.ColumnNode{
 		Column: db.Column{
 			ColumnName: k,
 			DataType:   v.Type,
