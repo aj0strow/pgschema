@@ -1,7 +1,12 @@
 package db
 
 type DatabaseNode struct {
-	SchemaNodes []SchemaNode
+	SchemaNodes    []SchemaNode
+	ExtensionNodes []ExtensionNode
+}
+
+type ExtensionNode struct {
+	Extension Extension
 }
 
 type SchemaNode struct {
