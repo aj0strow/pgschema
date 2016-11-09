@@ -7,47 +7,7 @@ import (
 	"testing"
 )
 
-func TestPlanTableMatch(t *testing.T) {
-	type Test struct {
-		Name       string
-		TableMatch tree.TableMatch
-		Changes    []Change
-	}
-	tests := []Test{
-		Test{
-			"create new table",
-			tree.TableMatch{
-				A: &info.Table{
-					TableName: "users",
-				},
-				B: nil,
-			},
-			[]Change{
-				CreateTable{"users"},
-			},
-		},
-		Test{
-			"drop old table",
-			tree.TableMatch{
-				A: nil,
-				B: &info.Table{
-					TableName: "customers",
-				},
-			},
-			[]Change{
-				DropTable{"customers"},
-			},
-		},
-	}
-	for _, test := range tests {
-		changes := planTableMatch(test.TableMatch)
-		if !reflect.DeepEqual(changes, test.Changes) {
-			t.Errorf("planTableMatch => %s", test.Name)
-		}
-	}
-}
-
-func TestPlanColumnMatch(t *testing.T) {
+func TestColumnChanges(t *testing.T) {
 	type Test struct {
 		Name        string
 		ColumnMatch tree.ColumnMatch
@@ -100,7 +60,7 @@ func TestPlanColumnMatch(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		changes := planColumnMatch(test.ColumnMatch)
+		changes := ColumnChanges(test.ColumnMatch)
 		if !reflect.DeepEqual(changes, test.Changes) {
 			t.Errorf("planColumnMatch => %s", test.Name)
 		}
