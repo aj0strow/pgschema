@@ -2,6 +2,7 @@
 package psql
 
 import (
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/info"
 	"github.com/aj0strow/pgschema/tree"
 )
@@ -25,7 +26,7 @@ func LoadDatabaseNode(db info.Conn) (tree.DatabaseNode, error) {
 	return databaseNode, nil
 }
 
-func LoadSchemaNode(db info.Conn, schema info.Schema) (tree.SchemaNode, error) {
+func LoadSchemaNode(db info.Conn, schema db.Schema) (tree.SchemaNode, error) {
 	tables, err := info.LoadTables(db, schema.SchemaName)
 	if err != nil {
 		return tree.SchemaNode{}, err
@@ -45,7 +46,7 @@ func LoadSchemaNode(db info.Conn, schema info.Schema) (tree.SchemaNode, error) {
 	return schemaNode, nil
 }
 
-func LoadTableNode(db info.Conn, schema info.Schema, table info.Table) (tree.TableNode, error) {
+func LoadTableNode(db info.Conn, schema db.Schema, table info.Table) (tree.TableNode, error) {
 	columns, err := info.LoadColumns(db, schema.SchemaName, table.TableName)
 	if err != nil {
 		return tree.TableNode{}, err

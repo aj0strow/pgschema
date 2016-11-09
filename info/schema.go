@@ -2,27 +2,24 @@ package info
 
 import (
 	"fmt"
+	"github.com/aj0strow/pgschema/db"
 )
 
-type Schema struct {
-	SchemaName string
-}
-
-func LoadSchemas(db Conn) ([]Schema, error) {
+func LoadSchemas(conn Conn) ([]db.Schema, error) {
 	q := fmt.Sprintf(`
 		SELECT schema_name
 		FROM information_schema.schemata
 		WHERE schema_name !~ 'pg_'
 		AND schema_name <> 'information_schema'
 	`)
-	rows, err := db.Query(q)
+	rows, err := conn.Query(q)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var schemas []Schema
+	var schemas []db.Schema
 	for rows.Next() {
-		schema := Schema{}
+		schema := db.Schema{}
 		rows.Scan(&schema.SchemaName)
 		schemas = append(schemas, schema)
 	}

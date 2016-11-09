@@ -1,6 +1,7 @@
 package tree
 
 import (
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/info"
 )
 
@@ -9,7 +10,7 @@ type DatabaseNode struct {
 }
 
 type SchemaNode struct {
-	Schema     info.Schema
+	Schema     db.Schema
 	TableNodes []TableNode
 }
 

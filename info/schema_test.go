@@ -1,8 +1,9 @@
 package info
 
 import (
-	"github.com/aj0strow/pgschema/temp"
 	"testing"
+
+	"github.com/aj0strow/pgschema/temp"
 )
 
 func TestLoadSchemas(t *testing.T) {

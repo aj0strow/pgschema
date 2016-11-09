@@ -2,6 +2,7 @@
 package hcl
 
 import (
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/info"
 	"github.com/aj0strow/pgschema/tree"
 	"github.com/hashicorp/hcl"
@@ -49,7 +50,7 @@ func convertSchema(k string, v Schema) tree.SchemaNode {
 		tables = append(tables, convertTable(tk, tv))
 	}
 	return tree.SchemaNode{
-		Schema: info.Schema{
+		Schema: db.Schema{
 			SchemaName: k,
 		},
 		TableNodes: tables,

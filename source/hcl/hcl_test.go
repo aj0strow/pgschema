@@ -1,6 +1,7 @@
 package hcl
 
 import (
+	"github.com/aj0strow/pgschema/db"
 	"github.com/aj0strow/pgschema/info"
 	"github.com/aj0strow/pgschema/tree"
 	"reflect"
@@ -45,7 +46,7 @@ schema "public" {
 	database = tree.DatabaseNode{
 		SchemaNodes: []tree.SchemaNode{
 			tree.SchemaNode{
-				Schema: info.Schema{
+				Schema: db.Schema{
 					SchemaName: "public",
 				},
 				TableNodes: tables,
@@ -84,7 +85,7 @@ func TestConvertDatabase(t *testing.T) {
 			tree.DatabaseNode{
 				SchemaNodes: []tree.SchemaNode{
 					tree.SchemaNode{
-						Schema: info.Schema{
+						Schema: db.Schema{
 							SchemaName: "public",
 						},
 					},
@@ -112,7 +113,7 @@ func TestConvertSchema(t *testing.T) {
 			"public",
 			Schema{},
 			tree.SchemaNode{
-				Schema: info.Schema{
+				Schema: db.Schema{
 					SchemaName: "public",
 				},
 			},
@@ -125,7 +126,7 @@ func TestConvertSchema(t *testing.T) {
 				},
 			},
 			tree.SchemaNode{
-				Schema: info.Schema{
+				Schema: db.Schema{
 					SchemaName: "public",
 				},
 				TableNodes: []tree.TableNode{
