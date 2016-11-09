@@ -1,4 +1,4 @@
-package info
+package psql
 
 import (
 	"github.com/aj0strow/pgschema/db"

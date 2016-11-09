@@ -1,4 +1,4 @@
-package info
+package psql
 
 import (
 	"github.com/jackc/pgx"

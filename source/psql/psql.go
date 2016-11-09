@@ -3,11 +3,14 @@ package psql
 
 import (
 	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/info"
 )
 
-func LoadDatabaseNode(conn info.Conn) (db.DatabaseNode, error) {
-	schemas, err := info.LoadSchemas(conn)
+func LoadDatabaseNode(conn Conn) (db.DatabaseNode, error) {
+	extensionNodes, err := LoadExtensionNodes(conn)
+	if err != nil {
+		return db.DatabaseNode{}, err
+	}
+	schemas, err := LoadSchemas(conn)
 	if err != nil {
 		return db.DatabaseNode{}, err
 	}
@@ -20,13 +23,14 @@ func LoadDatabaseNode(conn info.Conn) (db.DatabaseNode, error) {
 		schemaNodes = append(schemaNodes, schemaNode)
 	}
 	databaseNode := db.DatabaseNode{
-		SchemaNodes: schemaNodes,
+		ExtensionNodes: extensionNodes,
+		SchemaNodes:    schemaNodes,
 	}
 	return databaseNode, nil
 }
 
-func LoadSchemaNode(conn info.Conn, schema db.Schema) (db.SchemaNode, error) {
-	tables, err := info.LoadTables(conn, schema.SchemaName)
+func LoadSchemaNode(conn Conn, schema db.Schema) (db.SchemaNode, error) {
+	tables, err := LoadTables(conn, schema.SchemaName)
 	if err != nil {
 		return db.SchemaNode{}, err
 	}
@@ -45,8 +49,8 @@ func LoadSchemaNode(conn info.Conn, schema db.Schema) (db.SchemaNode, error) {
 	return schemaNode, nil
 }
 
-func LoadTableNode(conn info.Conn, schema db.Schema, table db.Table) (db.TableNode, error) {
-	columns, err := info.LoadColumns(conn, schema.SchemaName, table.TableName)
+func LoadTableNode(conn Conn, schema db.Schema, table db.Table) (db.TableNode, error) {
+	columns, err := LoadColumns(conn, schema.SchemaName, table.TableName)
 	if err != nil {
 		return db.TableNode{}, err
 	}

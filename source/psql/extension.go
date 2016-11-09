@@ -1,8 +1,22 @@
-package info
+package psql
 
 import (
 	"github.com/aj0strow/pgschema/db"
 )
+
+func LoadExtensionNodes(conn Conn) ([]db.ExtensionNode, error) {
+	exts, err := LoadExtensions(conn)
+	if err != nil {
+		return nil, err
+	}
+	nodes := make([]db.ExtensionNode, len(exts))
+	for i := range exts {
+		nodes[i] = db.ExtensionNode{
+			Extension: exts[i],
+		}
+	}
+	return nodes, nil
+}
 
 func LoadExtensions(conn Conn) ([]db.Extension, error) {
 	rows, err := conn.Query(`
