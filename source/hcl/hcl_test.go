@@ -1,9 +1,11 @@
 package hcl
 
 import (
-	"github.com/aj0strow/pgschema/db"
 	"reflect"
 	"testing"
+
+	"github.com/aj0strow/pgschema/db"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestParseBytes(t *testing.T) {
@@ -17,6 +19,8 @@ func TestParseBytes(t *testing.T) {
 		database db.DatabaseNode
 		tables   []db.TableNode
 	)
+
+	// Test table with column.
 	input = `
 schema "public" {
 	table "users" {
@@ -52,6 +56,22 @@ schema "public" {
 		},
 	}
 	tests = append(tests, Test{input, database})
+
+	// Test adding hstore extension.
+	input = `
+extension "hstore" {}
+	`
+	database = db.DatabaseNode{
+		ExtensionNodes: []db.ExtensionNode{
+			db.ExtensionNode{
+				db.Extension{
+					ExtName: "hstore",
+				},
+			},
+		},
+	}
+	tests = append(tests, Test{input, database})
+
 	for _, test := range tests {
 		node, err := ParseBytes([]byte(test.Input))
 		if err != nil {
@@ -59,7 +79,7 @@ schema "public" {
 		}
 		if !reflect.DeepEqual(node, test.DatabaseNode) {
 			t.Errorf("ParseBytes failure")
-			t.Errorf("have: %#v\nwant: %#v\n", node, test.DatabaseNode)
+			spew.Dump(node, test.DatabaseNode)
 		}
 	}
 }
@@ -95,7 +115,7 @@ func TestConvertDatabase(t *testing.T) {
 		node := convertDatabase(test.Value)
 		if !reflect.DeepEqual(node, test.DatabaseNode) {
 			t.Errorf("convertDatabase failure")
-			t.Errorf("have: %#v\nwant: %#v\n", node, test.DatabaseNode)
+			spew.Dump(node, test.DatabaseNode)
 		}
 	}
 }
@@ -141,7 +161,7 @@ func TestConvertSchema(t *testing.T) {
 		node := convertSchema(test.Key, test.Value)
 		if !reflect.DeepEqual(node, test.SchemaNode) {
 			t.Errorf("convertSchema failure")
-			t.Errorf("have: %#v\nwant: %#v\n", node, test.SchemaNode)
+			spew.Dump(node, test.SchemaNode)
 		}
 	}
 

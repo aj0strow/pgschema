@@ -7,7 +7,11 @@ import (
 )
 
 type Database struct {
-	Schema map[string]Schema
+	Extension map[string]Extension
+	Schema    map[string]Schema
+}
+
+type Extension struct {
 }
 
 type Schema struct {
@@ -33,12 +37,25 @@ func ParseBytes(bs []byte) (db.DatabaseNode, error) {
 }
 
 func convertDatabase(v Database) db.DatabaseNode {
+	var exts []db.ExtensionNode
+	for ek := range v.Extension {
+		exts = append(exts, convertExtension(ek))
+	}
 	var schemas []db.SchemaNode
 	for sk, sv := range v.Schema {
 		schemas = append(schemas, convertSchema(sk, sv))
 	}
 	return db.DatabaseNode{
-		SchemaNodes: schemas,
+		ExtensionNodes: exts,
+		SchemaNodes:    schemas,
+	}
+}
+
+func convertExtension(k string) db.ExtensionNode {
+	return db.ExtensionNode{
+		Extension: db.Extension{
+			ExtName: k,
+		},
 	}
 }
 
