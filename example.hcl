@@ -4,5 +4,8 @@ schema "v1" {
     column "email" {
       type = "text"
     }
+    column "name" {
+      type = "citext"
+    }
   }
 }

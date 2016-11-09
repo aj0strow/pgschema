@@ -2,12 +2,22 @@ package cli
 
 import (
 	"fmt"
+	"github.com/jackc/pgx"
 	"github.com/mitchellh/cli"
 	"os"
 )
 
 type Term interface {
 	cli.Ui
+}
+
+type SimpleTx struct {
+	*pgx.Tx
+}
+
+func (tx *SimpleTx) Exec(query string) error {
+	_, err := tx.Tx.Exec(query)
+	return err
 }
 
 func Run(args []string) int {

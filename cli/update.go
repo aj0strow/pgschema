@@ -2,7 +2,8 @@ package cli
 
 import (
 	"flag"
-	"fmt"
+	"github.com/aj0strow/pgschema/ab"
+	"github.com/aj0strow/pgschema/plan"
 	"github.com/aj0strow/pgschema/source/hcl"
 	"github.com/aj0strow/pgschema/source/psql"
 	"github.com/jackc/pgx"
@@ -47,7 +48,6 @@ func (cmd *Update) Run(args []string) int {
 	}
 	var (
 		pgConfig *pgx.ConnConfig
-		pgConn   *pgx.Conn
 	)
 	if dsn != "" {
 		config, err := pgx.ParseDSN(dsn)
@@ -74,15 +74,35 @@ func (cmd *Update) Run(args []string) int {
 		cmd.Error(err.Error())
 		return 1
 	}
-	pgConn = conn
-	defer pgConn.Close()
-	B, err := psql.LoadDatabaseNode(pgConn)
+	defer conn.Close()
+	B, err := psql.LoadDatabaseNode(conn)
 	if err != nil {
 		cmd.Error(err.Error())
 		return 1
 	}
-	fmt.Printf("%#v\n", B)
-	fmt.Printf("%#v\n", A)
+	tx, err := conn.Begin()
+	if err != nil {
+		cmd.Error(err.Error())
+		return 1
+	}
+	defer tx.Rollback()
+
+	databaseMatch := ab.MatchDatabase(A, B)
+	changes := plan.DatabaseChanges(databaseMatch)
+	runner := &plan.Runner{
+		Conn:   &SimpleTx{tx},
+		Logger: cmd,
+	}
+	err = runner.Run(changes)
+	if err != nil {
+		cmd.Error(err.Error())
+		return 1
+	}
+	err = tx.Commit()
+	if err != nil {
+		cmd.Error(err.Error())
+		return 1
+	}
 	return 0
 }
 

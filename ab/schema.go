@@ -15,7 +15,7 @@ type SchemaMatch struct {
 // merges them into one combined SchemaMatch list.
 func MatchSchemas(a, b []db.SchemaNode) []SchemaMatch {
 	var schemaMatches []SchemaMatch
-	var fromA map[string]bool
+	fromA := map[string]bool{}
 	for _, nodeA := range a {
 		schemaA := nodeA.Schema
 		schemaName := schemaA.SchemaName

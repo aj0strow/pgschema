@@ -9,6 +9,16 @@ type Change interface {
 	String() string
 }
 
+type SetSearchPath struct {
+	SchemaName string
+}
+
+func (sp SetSearchPath) String() string {
+	return fmt.Sprintf(`SET search_path TO %s`, sp.SchemaName)
+}
+
+var _ Change = (*SetSearchPath)(nil)
+
 // Create a new schema. This change occurs when you have a schema
 // but it doesn't exist in the database yet.
 type CreateSchema struct {

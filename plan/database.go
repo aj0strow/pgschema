@@ -11,11 +11,3 @@ func DatabaseChanges(databaseMatch ab.DatabaseMatch) []Change {
 	}
 	return cs
 }
-
-func SchemaChanges(schemaMatch ab.SchemaMatch) []Change {
-	var cs []Change
-	for _, tableMatch := range schemaMatch.TableMatches {
-		cs = append(cs, TableChanges(tableMatch)...)
-	}
-	return cs
-}
