@@ -7,14 +7,10 @@ import (
 	"testing"
 )
 
-type Conn interface {
-	Exec(string, ...interface{}) (pgx.CommandTag, error)
-}
-
 const SyntaxError = "42601"
 
-func checkSyntax(db Conn, q string) error {
-	_, err := db.Exec(q)
+func checkSyntax(conn *temp.Conn, q string) error {
+	_, err := conn.Exec(q)
 	if pgErr, ok := err.(pgx.PgError); ok {
 		if pgErr.Code != SyntaxError {
 			return nil

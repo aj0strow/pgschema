@@ -1,5 +1,9 @@
 package db
 
+type Extension struct {
+	ExtName string
+}
+
 type Schema struct {
 	SchemaName string
 }
