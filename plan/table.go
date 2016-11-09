@@ -1,10 +1,10 @@
 package plan
 
 import (
-	"github.com/aj0strow/pgschema/tree"
+	"github.com/aj0strow/pgschema/ab"
 )
 
-func TableChanges(tableMatch tree.TableMatch) []Change {
+func TableChanges(tableMatch ab.TableMatch) []Change {
 	var cs []Change
 	a, b := tableMatch.A, tableMatch.B
 	if a == nil {

@@ -56,7 +56,7 @@ func (at AlterTable) String() string {
 	return fmt.Sprintf(`ALTER TABLE %s %s`, at.TableName, at.Change)
 }
 
-var _ Change = (*AlterColumn)(nil)
+var _ Change = (*AlterTable)(nil)
 
 // Add a new column to an existing table.
 type AddColumn struct {

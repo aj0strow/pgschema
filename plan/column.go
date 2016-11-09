@@ -1,10 +1,10 @@
 package plan
 
 import (
-	"github.com/aj0strow/pgschema/tree"
+	"github.com/aj0strow/pgschema/ab"
 )
 
-func ColumnChanges(columnMatch tree.ColumnMatch) []Change {
+func ColumnChanges(columnMatch ab.ColumnMatch) []Change {
 	var cs []Change
 	a, b := columnMatch.A, columnMatch.B
 	if a == nil {

@@ -1,8 +1,8 @@
 package plan
 
 import (
+	"github.com/aj0strow/pgschema/ab"
 	"github.com/aj0strow/pgschema/info"
-	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
@@ -10,13 +10,13 @@ import (
 func TestPlanTableMatch(t *testing.T) {
 	type Test struct {
 		Name       string
-		TableMatch tree.TableMatch
+		TableMatch ab.TableMatch
 		Changes    []Change
 	}
 	tests := []Test{
 		Test{
 			"create new table",
-			tree.TableMatch{
+			ab.TableMatch{
 				A: &info.Table{
 					TableName: "users",
 				},
@@ -28,7 +28,7 @@ func TestPlanTableMatch(t *testing.T) {
 		},
 		Test{
 			"drop old table",
-			tree.TableMatch{
+			ab.TableMatch{
 				A: nil,
 				B: &info.Table{
 					TableName: "customers",

@@ -1,8 +1,8 @@
 package plan
 
 import (
+	"github.com/aj0strow/pgschema/ab"
 	"github.com/aj0strow/pgschema/info"
-	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
@@ -10,13 +10,13 @@ import (
 func TestColumnChanges(t *testing.T) {
 	type Test struct {
 		Name        string
-		ColumnMatch tree.ColumnMatch
+		ColumnMatch ab.ColumnMatch
 		Changes     []Change
 	}
 	tests := []Test{
 		Test{
 			"drop old column",
-			tree.ColumnMatch{
+			ab.ColumnMatch{
 				A: nil,
 				B: &info.Column{
 					ColumnName: "email",
@@ -28,7 +28,7 @@ func TestColumnChanges(t *testing.T) {
 		},
 		Test{
 			"add new column",
-			tree.ColumnMatch{
+			ab.ColumnMatch{
 				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "citext",
@@ -41,7 +41,7 @@ func TestColumnChanges(t *testing.T) {
 		},
 		Test{
 			"change column type",
-			tree.ColumnMatch{
+			ab.ColumnMatch{
 				A: &info.Column{
 					ColumnName: "email",
 					DataType:   "text",

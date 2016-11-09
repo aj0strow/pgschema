@@ -1,20 +1,21 @@
-package tree
+package ab
 
 import (
 	"github.com/aj0strow/pgschema/info"
+	"github.com/aj0strow/pgschema/tree"
 	"reflect"
 	"testing"
 )
 
-func newColumnNode(name string) ColumnNode {
-	return ColumnNode{
+func newColumnNode(name string) tree.ColumnNode {
+	return tree.ColumnNode{
 		info.Column{
 			ColumnName: name,
 		},
 	}
 }
 
-func ptrColumnNode(name string) *ColumnNode {
+func ptrColumnNode(name string) *tree.ColumnNode {
 	node := newColumnNode(name)
 	return &node
 }
@@ -28,9 +29,9 @@ func ptrColumn(name string) *info.Column {
 func TestFindColumNode(t *testing.T) {
 	type Test struct {
 		Name        string
-		ColumnNodes []ColumnNode
+		ColumnNodes []tree.ColumnNode
 		SearchName  string
-		Found       *ColumnNode
+		Found       *tree.ColumnNode
 	}
 	tests := []Test{
 		Test{
@@ -41,13 +42,13 @@ func TestFindColumNode(t *testing.T) {
 		},
 		Test{
 			`empty column list`,
-			[]ColumnNode{},
+			[]tree.ColumnNode{},
 			"test1",
 			nil,
 		},
 		Test{
 			`wrong name`,
-			[]ColumnNode{
+			[]tree.ColumnNode{
 				newColumnNode("test2"),
 			},
 			"test1",
@@ -55,7 +56,7 @@ func TestFindColumNode(t *testing.T) {
 		},
 		Test{
 			`correct name`,
-			[]ColumnNode{
+			[]tree.ColumnNode{
 				newColumnNode("test1"),
 				newColumnNode("test2"),
 			},
@@ -74,8 +75,8 @@ func TestFindColumNode(t *testing.T) {
 func TestMatchColumnNodes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []ColumnNode
-		B       []ColumnNode
+		A       []tree.ColumnNode
+		B       []tree.ColumnNode
 		Matches []ColumnMatch
 	}
 	tests := []Test{
@@ -87,13 +88,13 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 		Test{
 			"empty column node lists",
-			[]ColumnNode{},
-			[]ColumnNode{},
+			[]tree.ColumnNode{},
+			[]tree.ColumnNode{},
 			nil,
 		},
 		Test{
 			"columns in a only",
-			[]ColumnNode{
+			[]tree.ColumnNode{
 				newColumnNode("email"),
 			},
 			nil,
@@ -107,7 +108,7 @@ func TestMatchColumnNodes(t *testing.T) {
 		Test{
 			"columns in b only",
 			nil,
-			[]ColumnNode{
+			[]tree.ColumnNode{
 				newColumnNode("dob"),
 			},
 			[]ColumnMatch{
@@ -119,7 +120,7 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 		Test{
 			"multiple columns",
-			[]ColumnNode{
+			[]tree.ColumnNode{
 				newColumnNode("one"),
 				newColumnNode("two"),
 			},
@@ -137,61 +138,9 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		matches := MatchColumnNodes(test.A, test.B)
+		matches := MatchColumns(test.A, test.B)
 		if !reflect.DeepEqual(matches, test.Matches) {
 			t.Errorf("MatchColumnNodes => %s", test.Name)
-		}
-	}
-}
-
-func newTable(name string) info.Table {
-	return info.Table{
-		TableName: name,
-	}
-}
-
-func newTableNode(name string) TableNode {
-	return TableNode{
-		Table: newTable(name),
-	}
-}
-
-func ptrTable(name string) *info.Table {
-	table := newTable(name)
-	return &table
-}
-
-func TestMatchTableNodes(t *testing.T) {
-	type Test struct {
-		Name    string
-		A       []TableNode
-		B       []TableNode
-		Matches []TableMatch
-	}
-	tests := []Test{
-		Test{
-			"multiple tables",
-			[]TableNode{
-				newTableNode("users"),
-				newTableNode("passwords"),
-			},
-			nil,
-			[]TableMatch{
-				TableMatch{
-					A: ptrTable("users"),
-					B: nil,
-				},
-				TableMatch{
-					A: ptrTable("passwords"),
-					B: nil,
-				},
-			},
-		},
-	}
-	for _, test := range tests {
-		matches := MatchTableNodes(test.A, test.B)
-		if !reflect.DeepEqual(matches, test.Matches) {
-			t.Errorf("MatchTableNodes => %s", test.Name)
 		}
 	}
 }
