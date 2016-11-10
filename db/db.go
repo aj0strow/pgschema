@@ -16,4 +16,5 @@ type Column struct {
 	ColumnName    string
 	DataType      string
 	CastTypeUsing string
+	NotNull       bool
 }

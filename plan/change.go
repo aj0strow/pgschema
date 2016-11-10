@@ -148,3 +148,21 @@ func (sd SetDataType) String() string {
 }
 
 var _ Change = (*SetDataType)(nil)
+
+// Set column to not null.
+type SetNotNull struct{}
+
+func (sn SetNotNull) String() string {
+	return `SET NOT NULL`
+}
+
+var _ Change = (*SetNotNull)(nil)
+
+// Drop not null constraint.
+type DropNotNull struct{}
+
+func (dn DropNotNull) String() string {
+	return `DROP NOT NULL`
+}
+
+var _ Change = (*DropNotNull)(nil)

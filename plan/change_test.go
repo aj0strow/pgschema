@@ -55,6 +55,20 @@ func TestChanges(t *testing.T) {
 				},
 			},
 		},
+		AlterTable{
+			"address",
+			AlterColumn{
+				"street",
+				SetNotNull{},
+			},
+		},
+		AlterTable{
+			"address",
+			AlterColumn{
+				"street",
+				DropNotNull{},
+			},
+		},
 	}
 	for _, change := range changes {
 		err := checkSyntax(conn, change.String())

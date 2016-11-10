@@ -83,6 +83,42 @@ func TestColumnChanges(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"set not null",
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName: "cost",
+					NotNull:    true,
+				},
+				B: &db.Column{
+					ColumnName: "cost",
+				},
+			},
+			[]Change{
+				AlterColumn{
+					"cost",
+					SetNotNull{},
+				},
+			},
+		},
+		Test{
+			"drop not null",
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName: "cost",
+				},
+				B: &db.Column{
+					ColumnName: "cost",
+					NotNull:    true,
+				},
+			},
+			[]Change{
+				AlterColumn{
+					"cost",
+					DropNotNull{},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		changes := ColumnChanges(test.ColumnMatch)
