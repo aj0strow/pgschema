@@ -66,7 +66,7 @@ func TestColumnChanges(t *testing.T) {
 				A: &db.Column{
 					ColumnName:    "cost",
 					DataType:      "money",
-					CastTypeUsing: "($name * 100)::money",
+					CastTypeUsing: "(cost * 100)::money",
 				},
 				B: &db.Column{
 					ColumnName: "cost",

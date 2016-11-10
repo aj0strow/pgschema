@@ -11,7 +11,7 @@ schema "v1" {
     }
     column "views" {
       type = "integer"
-      cast_type_using = "$name::integer"
+      cast_type_using = "views::integer"
     }
   }
 }

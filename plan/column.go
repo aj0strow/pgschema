@@ -1,8 +1,6 @@
 package plan
 
 import (
-	"strings"
-
 	"github.com/aj0strow/pgschema/ab"
 	"github.com/aj0strow/pgschema/db"
 )
@@ -42,7 +40,7 @@ func alterColumn(a, b *db.Column) []Change {
 		} else {
 			cs = append(cs, CastDataType{
 				SetDataType: SetDataType{a.DataType},
-				Using:       strings.Replace(a.CastTypeUsing, "$name", a.ColumnName, -1),
+				Using:       a.CastTypeUsing,
 			})
 		}
 	}
