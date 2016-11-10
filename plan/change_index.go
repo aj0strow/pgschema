@@ -9,11 +9,16 @@ type CreateIndex struct {
 	IndexName string
 	TableName string
 	Exprs     []string
+	Unique    bool
 }
 
 func (ci CreateIndex) String() string {
 	var b bytes.Buffer
-	b.WriteString("CREATE INDEX ")
+	b.WriteString("CREATE ")
+	if ci.Unique {
+		b.WriteString("UNIQUE ")
+	}
+	b.WriteString("INDEX ")
 	b.WriteString(ci.IndexName)
 	b.WriteString(" ON ")
 	b.WriteString(ci.TableName)

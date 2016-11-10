@@ -74,6 +74,12 @@ func TestChanges(t *testing.T) {
 			IndexName: "users_email_idx",
 			Exprs:     []string{"lower(email)"},
 		},
+		CreateIndex{
+			TableName: "users",
+			IndexName: "users_email_idx",
+			Exprs:     []string{"lower(email)"},
+			Unique:    true,
+		},
 		DropIndex{
 			"users_pkey",
 		},

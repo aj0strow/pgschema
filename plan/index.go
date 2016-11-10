@@ -15,6 +15,7 @@ func IndexChanges(indexMatch ab.IndexMatch) []Change {
 			IndexName: a.IndexName,
 			TableName: a.TableName,
 			Exprs:     a.Exprs,
+			Unique:    a.Unique,
 		})
 	}
 	return cs
