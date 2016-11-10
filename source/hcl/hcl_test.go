@@ -218,32 +218,3 @@ func TestConvertTable(t *testing.T) {
 		}
 	}
 }
-
-func TestConvertColumn(t *testing.T) {
-	type Test struct {
-		Key        string
-		Value      Column
-		ColumnNode db.ColumnNode
-	}
-	tests := []Test{
-		Test{
-			"email",
-			Column{
-				Type: "text",
-			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName: "email",
-					DataType:   "text",
-				},
-			},
-		},
-	}
-	for _, test := range tests {
-		node := convertColumn(test.Key, test.Value)
-		if !reflect.DeepEqual(node, test.ColumnNode) {
-			t.Errorf("convertColumn failure")
-			spew.Dump(node, test.ColumnNode)
-		}
-	}
-}

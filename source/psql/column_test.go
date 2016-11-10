@@ -31,6 +31,14 @@ func TestLoadColumn(t *testing.T) {
 				NotNull:    true,
 			},
 		},
+		Test{
+			`name text DEFAULT 'nobody'`,
+			db.Column{
+				ColumnName: "name",
+				DataType:   "text",
+				Default:    `'nobody'::text`,
+			},
+		},
 	}
 	for _, test := range tests {
 		runLoadColumn(t, test.Query, test.Column)

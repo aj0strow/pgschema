@@ -2,7 +2,9 @@ package psql
 
 import (
 	"fmt"
+
 	"github.com/aj0strow/pgschema/db"
+	"github.com/jackc/pgx"
 )
 
 func LoadColumnNodes(conn Conn, schema db.Schema, table db.Table) ([]db.ColumnNode, error) {
@@ -21,7 +23,11 @@ func LoadColumnNodes(conn Conn, schema db.Schema, table db.Table) ([]db.ColumnNo
 
 func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	q := fmt.Sprintf(`
-		SELECT column_name, data_type, is_nullable
+		SELECT
+			column_name,
+			data_type,
+			is_nullable,
+			column_default
 		FROM information_schema.columns
 		WHERE table_schema = '%s'
 		AND table_name = '%s'
@@ -33,13 +39,18 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	defer rows.Close()
 	columns := []db.Column{}
 	for rows.Next() {
-		var isNullable string
 		column := db.Column{}
-		err := rows.Scan(&column.ColumnName, &column.DataType, &isNullable)
+		var (
+			isNullable string
+			colDefault pgx.NullString
+		)
+
+		err := rows.Scan(&column.ColumnName, &column.DataType, &isNullable, &colDefault)
 		if err != nil {
 			return nil, err
 		}
 		column.NotNull = isNullable == "NO"
+		column.Default = colDefault.String
 		columns = append(columns, column)
 	}
 	if err := rows.Err(); err != nil {

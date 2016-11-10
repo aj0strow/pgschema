@@ -17,6 +17,7 @@ type Column struct {
 	DataType      string
 	CastTypeUsing string
 	NotNull       bool
+	Default       string
 }
 
 type Index struct {
