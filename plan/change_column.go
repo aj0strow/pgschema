@@ -65,7 +65,7 @@ var _ Change = (*SetDataType)(nil)
 // Set column to not null.
 type SetNotNull struct{}
 
-func (sn SetNotNull) String() string {
+func (SetNotNull) String() string {
 	return `SET NOT NULL`
 }
 
@@ -74,8 +74,28 @@ var _ Change = (*SetNotNull)(nil)
 // Drop not null constraint.
 type DropNotNull struct{}
 
-func (dn DropNotNull) String() string {
+func (DropNotNull) String() string {
 	return `DROP NOT NULL`
 }
 
 var _ Change = (*DropNotNull)(nil)
+
+// Set column default expression value.
+type SetDefault struct {
+	Expression string
+}
+
+func (sd SetDefault) String() string {
+	return fmt.Sprintf(`SET DEFAULT %s`, sd.Expression)
+}
+
+var _ Change = (*SetDefault)(nil)
+
+// Drop column default.
+type DropDefault struct{}
+
+func (DropDefault) String() string {
+	return `DROP DEFAULT`
+}
+
+var _ Change = (*DropDefault)(nil)

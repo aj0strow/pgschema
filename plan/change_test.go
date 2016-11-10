@@ -69,6 +69,20 @@ func TestChanges(t *testing.T) {
 				DropNotNull{},
 			},
 		},
+		AlterTable{
+			"address",
+			AlterColumn{
+				"street",
+				SetDefault{`'placeholder'`},
+			},
+		},
+		AlterTable{
+			"address",
+			AlterColumn{
+				"street",
+				DropDefault{},
+			},
+		},
 		CreateIndex{
 			TableName: "users",
 			IndexName: "users_email_idx",
