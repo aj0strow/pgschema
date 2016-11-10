@@ -69,6 +69,9 @@ func TestChanges(t *testing.T) {
 				DropNotNull{},
 			},
 		},
+		DropIndex{
+			"users_pkey",
+		},
 	}
 	for _, change := range changes {
 		err := checkSyntax(conn, change.String())
