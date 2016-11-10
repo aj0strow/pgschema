@@ -5,6 +5,25 @@ import (
 	"github.com/aj0strow/pgschema/db"
 )
 
+func LoadTableNodes(conn Conn, schema db.Schema) ([]db.TableNode, error) {
+	tables, err := LoadTables(conn, schema.SchemaName)
+	if err != nil {
+		return nil, err
+	}
+	tableNodes := make([]db.TableNode, len(tables))
+	for i := range tables {
+		columnNodes, err := LoadColumnNodes(conn, schema, tables[i])
+		if err != nil {
+			return nil, err
+		}
+		tableNodes[i] = db.TableNode{
+			Table:       tables[i],
+			ColumnNodes: columnNodes,
+		}
+	}
+	return tableNodes, nil
+}
+
 func LoadTables(conn Conn, schemaName string) ([]db.Table, error) {
 	q := fmt.Sprintf(`
 		SELECT table_name

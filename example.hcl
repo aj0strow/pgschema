@@ -1,3 +1,4 @@
+extension "hstore" {}
 
 schema "v1" {
   table "users" {
@@ -5,7 +6,7 @@ schema "v1" {
       type = "text"
     }
     column "name" {
-      type = "citext"
+      type = "text"
     }
   }
 }
