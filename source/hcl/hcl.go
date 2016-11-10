@@ -11,8 +11,7 @@ type Database struct {
 	Schema    map[string]Schema
 }
 
-type Extension struct {
-}
+type Extension struct{}
 
 type Schema struct {
 	Table map[string]Table
@@ -20,6 +19,7 @@ type Schema struct {
 
 type Table struct {
 	Column map[string]Column
+	Index  map[string]Index
 }
 
 type Column struct {
@@ -27,6 +27,8 @@ type Column struct {
 	NotNull       bool   `hcl:"not_null"`
 	CastTypeUsing string `hcl:"cast_type_using"`
 }
+
+type Index struct{}
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {
 	var database Database
@@ -79,11 +81,16 @@ func convertTable(k string, v Table) db.TableNode {
 	for ck, cv := range v.Column {
 		columns = append(columns, convertColumn(ck, cv))
 	}
+	var indexes []db.IndexNode
+	for ik, iv := range v.Index {
+		indexes = append(indexes, convertIndex(ik, iv))
+	}
 	return db.TableNode{
 		Table: db.Table{
 			TableName: k,
 		},
 		ColumnNodes: columns,
+		IndexNodes:  indexes,
 	}
 }
 
@@ -94,6 +101,14 @@ func convertColumn(k string, v Column) db.ColumnNode {
 			DataType:      v.Type,
 			CastTypeUsing: v.CastTypeUsing,
 			NotNull:       v.NotNull,
+		},
+	}
+}
+
+func convertIndex(k string, v Index) db.IndexNode {
+	return db.IndexNode{
+		Index: db.Index{
+			IndexName: k,
 		},
 	}
 }

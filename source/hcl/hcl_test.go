@@ -240,7 +240,33 @@ func TestConvertColumn(t *testing.T) {
 		node := convertColumn(test.Key, test.Value)
 		if !reflect.DeepEqual(node, test.ColumnNode) {
 			t.Errorf("convertColumn failure")
-			t.Errorf("have: %#v\nwant: %#v\n", node, test.ColumnNode)
+			spew.Dump(node, test.ColumnNode)
+		}
+	}
+}
+
+func TestConvertIndex(t *testing.T) {
+	type Test struct {
+		Key       string
+		Value     Index
+		IndexNode db.IndexNode
+	}
+	tests := []Test{
+		Test{
+			"users_email_key",
+			Index{},
+			db.IndexNode{
+				Index: db.Index{
+					IndexName: "users_email_key",
+				},
+			},
+		},
+	}
+	for _, test := range tests {
+		node := convertIndex(test.Key, test.Value)
+		if !reflect.DeepEqual(node, test.IndexNode) {
+			t.Errorf("bad index conversion")
+			spew.Dump(node, test.IndexNode)
 		}
 	}
 }
