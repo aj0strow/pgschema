@@ -7,6 +7,7 @@ schema "v1" {
     }
     column "name" {
       type = "text"
+      not_null = true
     }
     column "views" {
       type = "integer"

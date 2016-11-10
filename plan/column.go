@@ -29,7 +29,7 @@ func ColumnChanges(columnMatch ab.ColumnMatch) []Change {
 func createColumn(a *db.Column) []Change {
 	var cs []Change
 	if a.NotNull {
-		cs = append(cs, AlterColumn{a.ColumnName, SetNotNull{}})
+		cs = append(cs, SetNotNull{})
 	}
 	return cs
 }

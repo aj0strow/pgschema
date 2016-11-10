@@ -24,6 +24,7 @@ type Table struct {
 
 type Column struct {
 	Type          string
+	NotNull       bool   `hcl:"not_null"`
 	CastTypeUsing string `hcl:"cast_type_using"`
 }
 
@@ -92,6 +93,7 @@ func convertColumn(k string, v Column) db.ColumnNode {
 			ColumnName:    k,
 			DataType:      v.Type,
 			CastTypeUsing: v.CastTypeUsing,
+			NotNull:       v.NotNull,
 		},
 	}
 }
