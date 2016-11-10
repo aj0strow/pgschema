@@ -29,6 +29,9 @@ func createColumn(a *db.Column) []Change {
 	if a.NotNull {
 		cs = append(cs, SetNotNull{})
 	}
+	if a.Default != "" {
+		cs = append(cs, SetDefault{a.Default})
+	}
 	return cs
 }
 
@@ -51,5 +54,17 @@ func alterColumn(a, b *db.Column) []Change {
 			cs = append(cs, DropNotNull{})
 		}
 	}
+	cs = append(cs, changeDefault(a, b)...)
 	return cs
+}
+
+func changeDefault(a, b *db.Column) []Change {
+	var cs []Change
+	if a.Default == b.Default {
+		return cs
+	}
+	if a.Default == "" {
+		return append(cs, DropDefault{})
+	}
+	return append(cs, SetDefault{a.Default})
 }

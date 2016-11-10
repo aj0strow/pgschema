@@ -119,6 +119,42 @@ func TestColumnChanges(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"set default",
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName: "cost",
+					Default:    "0",
+				},
+				B: &db.Column{
+					ColumnName: "cost",
+				},
+			},
+			[]Change{
+				AlterColumn{
+					"cost",
+					SetDefault{"0"},
+				},
+			},
+		},
+		Test{
+			"drop default",
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName: "cost",
+				},
+				B: &db.Column{
+					ColumnName: "cost",
+					Default:    "0",
+				},
+			},
+			[]Change{
+				AlterColumn{
+					"cost",
+					DropDefault{},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		changes := ColumnChanges(test.ColumnMatch)
