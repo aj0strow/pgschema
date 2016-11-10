@@ -10,15 +10,13 @@ import (
 
 func TestConvertIndex(t *testing.T) {
 	type Test struct {
-		SchemaName string
-		TableName  string
-		IndexName  string
-		Value      Index
-		IndexNode  db.IndexNode
+		TableName string
+		IndexName string
+		Value     Index
+		IndexNode db.IndexNode
 	}
 	tests := []Test{
 		Test{
-			"public",
 			"users",
 			"users_email_key",
 			Index{
@@ -33,7 +31,6 @@ func TestConvertIndex(t *testing.T) {
 			},
 		},
 		Test{
-			"public",
 			"users",
 			"users_email_key",
 			Index{
@@ -51,7 +48,7 @@ func TestConvertIndex(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		node := convertIndex(test.SchemaName, test.TableName, test.IndexName, test.Value)
+		node := convertIndex(test.TableName, test.IndexName, test.Value)
 		if !reflect.DeepEqual(node, test.IndexNode) {
 			t.Errorf("bad index conversion")
 			spew.Dump(node, test.IndexNode)

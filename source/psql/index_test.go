@@ -36,6 +36,16 @@ func TestLoadIndexes(t *testing.T) {
 				Unique:    true,
 			},
 		},
+		Test{
+			`ALTER TABLE users ADD PRIMARY KEY (name)`,
+			db.Index{
+				TableName: "users",
+				IndexName: "users_pkey",
+				Unique:    true,
+				Primary:   true,
+				Exprs:     []string{"name"},
+			},
+		},
 	}
 	for _, test := range tests {
 		runIndexTest(t, test.Setup, test.Index)

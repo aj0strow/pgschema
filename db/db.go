@@ -25,4 +25,5 @@ type Index struct {
 	IndexName string
 	Exprs     []string
 	Unique    bool
+	Primary   bool
 }

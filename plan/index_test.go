@@ -19,12 +19,14 @@ func TestIndexChanges(t *testing.T) {
 			"create new index",
 			ab.IndexMatch{
 				A: &db.Index{
+					TableName: "users",
 					IndexName: "users_email_key",
 					Exprs:     []string{"lower(email)"},
 				},
 			},
 			[]Change{
 				CreateIndex{
+					TableName: "users",
 					IndexName: "users_email_key",
 					Exprs:     []string{"lower(email)"},
 				},
@@ -53,6 +55,67 @@ func TestIndexChanges(t *testing.T) {
 				},
 			},
 			nil,
+		},
+		Test{
+			"change index unique",
+			ab.IndexMatch{
+				A: &db.Index{
+					TableName: "users",
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+					Unique:    true,
+				},
+				B: &db.Index{
+					TableName: "users",
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+				},
+			},
+			[]Change{
+				DropIndex{"users_email_key"},
+				CreateIndex{
+					TableName: "users",
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+					Unique:    true,
+				},
+			},
+		},
+		Test{
+			"add primary key",
+			ab.IndexMatch{
+				A: &db.Index{
+					TableName: "users",
+					IndexName: "users_pkey",
+					Exprs:     []string{"email"},
+					Unique:    true,
+					Primary:   true,
+				},
+			},
+			[]Change{
+				AlterTable{
+					"users",
+					AddPrimaryKey{"users_pkey", []string{"email"}},
+				},
+			},
+		},
+		Test{
+			"drop primary key",
+			ab.IndexMatch{
+				B: &db.Index{
+					TableName: "users",
+					IndexName: "users_pkey",
+					Exprs:     []string{"email"},
+					Unique:    true,
+					Primary:   true,
+				},
+			},
+			[]Change{
+				AlterTable{
+					"users",
+					DropConstraint{"users_pkey"},
+				},
+			},
 		},
 	}
 	for _, test := range tests {

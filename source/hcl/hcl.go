@@ -2,6 +2,8 @@
 package hcl
 
 import (
+	"fmt"
+
 	"github.com/aj0strow/pgschema/db"
 	"github.com/hashicorp/hcl"
 )
@@ -18,8 +20,9 @@ type Schema struct {
 }
 
 type Table struct {
-	Column map[string]Column
-	Index  map[string]Index
+	PrimaryKey []string `hcl:"primary_key"`
+	Column     map[string]Column
+	Index      map[string]Index
 }
 
 type Column struct {
@@ -27,6 +30,7 @@ type Column struct {
 	NotNull       bool   `hcl:"not_null"`
 	CastTypeUsing string `hcl:"cast_type_using"`
 	Default       string
+	PrimaryKey    bool `hcl:"primary_key"`
 }
 
 type Index struct {
@@ -70,7 +74,7 @@ func convertExtension(k string) db.ExtensionNode {
 func convertSchema(k string, v Schema) db.SchemaNode {
 	var tables []db.TableNode
 	for tableName, tv := range v.Table {
-		tables = append(tables, convertTable(k, tableName, tv))
+		tables = append(tables, convertTable(tableName, tv))
 	}
 	return db.SchemaNode{
 		Schema: db.Schema{
@@ -80,14 +84,22 @@ func convertSchema(k string, v Schema) db.SchemaNode {
 	}
 }
 
-func convertTable(schemaName, tableName string, v Table) db.TableNode {
-	var columns []db.ColumnNode
+func convertTable(tableName string, v Table) db.TableNode {
+	var (
+		columns []db.ColumnNode
+		indexes []db.IndexNode
+	)
 	for columnName, c := range v.Column {
 		columns = append(columns, convertColumn(columnName, c))
+		if c.PrimaryKey {
+			indexes = append(indexes, newPrimaryKey(tableName, []string{columnName}))
+		}
 	}
-	var indexes []db.IndexNode
+	if len(v.PrimaryKey) > 0 {
+		indexes = append(indexes, newPrimaryKey(tableName, v.PrimaryKey))
+	}
 	for indexName, ix := range v.Index {
-		indexes = append(indexes, convertIndex(schemaName, tableName, indexName, ix))
+		indexes = append(indexes, convertIndex(tableName, indexName, ix))
 	}
 	return db.TableNode{
 		Table: db.Table{
@@ -104,19 +116,31 @@ func convertColumn(k string, v Column) db.ColumnNode {
 			ColumnName:    k,
 			DataType:      v.Type,
 			CastTypeUsing: v.CastTypeUsing,
-			NotNull:       v.NotNull,
+			NotNull:       v.NotNull || v.PrimaryKey,
 			Default:       v.Default,
 		},
 	}
 }
 
-func convertIndex(schemaName, tableName, indexName string, v Index) db.IndexNode {
+func convertIndex(tableName, indexName string, v Index) db.IndexNode {
 	return db.IndexNode{
 		Index: db.Index{
 			TableName: tableName,
 			IndexName: indexName,
 			Exprs:     v.On,
 			Unique:    v.Unique,
+		},
+	}
+}
+
+func newPrimaryKey(tableName string, columnNames []string) db.IndexNode {
+	return db.IndexNode{
+		Index: db.Index{
+			TableName: tableName,
+			IndexName: fmt.Sprintf("%s_pkey", tableName),
+			Exprs:     columnNames,
+			Unique:    true,
+			Primary:   true,
 		},
 	}
 }

@@ -2,20 +2,35 @@ extension "uuid-ossp" {}
 
 schema "v1" {
   table "users" {
-    column "email" {
-      type = "text"
+    column "id" {
       primary_key = true
     }
+    
+    column "email" {
+      type = "text"
+    }
+    
     column "name" {
       type = "text"
       not_null = true
     }
-    column "views" {
+    
+    column "view_count" {
       type = "integer"
       cast_type_using = "views::integer"
+      prior_name = "views"
     }
-    index "users_email_key" {
-      on = [ "lower(email)" ]
+    
+    constraint "users_pkey" {
+      primary_key = [ "id", "created_at" ]
     }
+    
+    
+    
+    constraint "users_pkey" {
+      primary_key = [ "id", "created_at" ]
+    }
+    
+    primary_key = [ "id", "created_at" ]
   }
 }
