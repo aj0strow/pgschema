@@ -20,6 +20,7 @@ type Column struct {
 }
 
 type Index struct {
+	TableName string
 	IndexName string
 	Exprs     []string
 }

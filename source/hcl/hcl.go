@@ -28,7 +28,9 @@ type Column struct {
 	CastTypeUsing string `hcl:"cast_type_using"`
 }
 
-type Index struct{}
+type Index struct {
+	On []string
+}
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {
 	var database Database
@@ -65,8 +67,8 @@ func convertExtension(k string) db.ExtensionNode {
 
 func convertSchema(k string, v Schema) db.SchemaNode {
 	var tables []db.TableNode
-	for tk, tv := range v.Table {
-		tables = append(tables, convertTable(tk, tv))
+	for tableName, tv := range v.Table {
+		tables = append(tables, convertTable(k, tableName, tv))
 	}
 	return db.SchemaNode{
 		Schema: db.Schema{
@@ -76,18 +78,18 @@ func convertSchema(k string, v Schema) db.SchemaNode {
 	}
 }
 
-func convertTable(k string, v Table) db.TableNode {
+func convertTable(schemaName, tableName string, v Table) db.TableNode {
 	var columns []db.ColumnNode
-	for ck, cv := range v.Column {
-		columns = append(columns, convertColumn(ck, cv))
+	for columnName, c := range v.Column {
+		columns = append(columns, convertColumn(columnName, c))
 	}
 	var indexes []db.IndexNode
-	for ik, iv := range v.Index {
-		indexes = append(indexes, convertIndex(ik, iv))
+	for indexName, ix := range v.Index {
+		indexes = append(indexes, convertIndex(schemaName, tableName, indexName, ix))
 	}
 	return db.TableNode{
 		Table: db.Table{
-			TableName: k,
+			TableName: tableName,
 		},
 		ColumnNodes: columns,
 		IndexNodes:  indexes,
@@ -105,10 +107,12 @@ func convertColumn(k string, v Column) db.ColumnNode {
 	}
 }
 
-func convertIndex(k string, v Index) db.IndexNode {
+func convertIndex(schemaName, tableName, indexName string, v Index) db.IndexNode {
 	return db.IndexNode{
 		Index: db.Index{
-			IndexName: k,
+			TableName: tableName,
+			IndexName: indexName,
+			Exprs:     v.On,
 		},
 	}
 }

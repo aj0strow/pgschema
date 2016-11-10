@@ -14,5 +14,8 @@ schema "v1" {
       type = "integer"
       cast_type_using = "views::integer"
     }
+    index "users_email_key" {
+      on = [ "lower(email)" ]
+    }
   }
 }

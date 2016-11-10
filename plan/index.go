@@ -10,5 +10,12 @@ func IndexChanges(indexMatch ab.IndexMatch) []Change {
 	if a == nil {
 		return append(cs, DropIndex{b.IndexName})
 	}
+	if b == nil {
+		return append(cs, CreateIndex{
+			IndexName: a.IndexName,
+			TableName: a.TableName,
+			Exprs:     a.Exprs,
+		})
+	}
 	return cs
 }

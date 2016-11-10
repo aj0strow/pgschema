@@ -24,6 +24,7 @@ func TestLoadIndexes(t *testing.T) {
 		Test{
 			`CREATE INDEX myindex ON users (name)`,
 			db.Index{
+				TableName: "users",
 				IndexName: "myindex",
 			},
 		},

@@ -69,6 +69,11 @@ func TestChanges(t *testing.T) {
 				DropNotNull{},
 			},
 		},
+		CreateIndex{
+			TableName: "users",
+			IndexName: "users_email_idx",
+			Exprs:     []string{"lower(email)"},
+		},
 		DropIndex{
 			"users_pkey",
 		},

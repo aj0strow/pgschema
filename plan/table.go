@@ -18,5 +18,8 @@ func TableChanges(tableMatch ab.TableMatch) []Change {
 			cs = append(cs, AlterTable{a.TableName, change})
 		}
 	}
+	for _, indexMatch := range tableMatch.IndexMatches {
+		cs = append(cs, IndexChanges(indexMatch)...)
+	}
 	return cs
 }

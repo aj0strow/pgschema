@@ -122,7 +122,7 @@ func TestConvertDatabase(t *testing.T) {
 
 func TestConvertSchema(t *testing.T) {
 	type Test struct {
-		Key        string
+		SchemaName string
 		Value      Schema
 		SchemaNode db.SchemaNode
 	}
@@ -158,7 +158,7 @@ func TestConvertSchema(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		node := convertSchema(test.Key, test.Value)
+		node := convertSchema(test.SchemaName, test.Value)
 		if !reflect.DeepEqual(node, test.SchemaNode) {
 			t.Errorf("convertSchema failure")
 			spew.Dump(node, test.SchemaNode)
@@ -169,12 +169,14 @@ func TestConvertSchema(t *testing.T) {
 
 func TestConvertTable(t *testing.T) {
 	type Test struct {
-		Key       string
-		Value     Table
-		TableNode db.TableNode
+		SchemaName string
+		TableName  string
+		Value      Table
+		TableNode  db.TableNode
 	}
 	tests := []Test{
 		Test{
+			"public",
 			"users",
 			Table{},
 			db.TableNode{
@@ -184,6 +186,7 @@ func TestConvertTable(t *testing.T) {
 			},
 		},
 		Test{
+			"public",
 			"customers",
 			Table{
 				Column: map[string]Column{
@@ -208,7 +211,7 @@ func TestConvertTable(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		node := convertTable(test.Key, test.Value)
+		node := convertTable(test.SchemaName, test.TableName, test.Value)
 		if !reflect.DeepEqual(node, test.TableNode) {
 			t.Errorf("convertTable failure")
 			t.Errorf("have: %#v\nwant: %#v\n", node, test.TableNode)
@@ -247,23 +250,31 @@ func TestConvertColumn(t *testing.T) {
 
 func TestConvertIndex(t *testing.T) {
 	type Test struct {
-		Key       string
-		Value     Index
-		IndexNode db.IndexNode
+		SchemaName string
+		TableName  string
+		IndexName  string
+		Value      Index
+		IndexNode  db.IndexNode
 	}
 	tests := []Test{
 		Test{
+			"public",
+			"users",
 			"users_email_key",
-			Index{},
+			Index{
+				On: []string{"lower(email)"},
+			},
 			db.IndexNode{
 				Index: db.Index{
+					TableName: "users",
 					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
 				},
 			},
 		},
 	}
 	for _, test := range tests {
-		node := convertIndex(test.Key, test.Value)
+		node := convertIndex(test.SchemaName, test.TableName, test.IndexName, test.Value)
 		if !reflect.DeepEqual(node, test.IndexNode) {
 			t.Errorf("bad index conversion")
 			spew.Dump(node, test.IndexNode)

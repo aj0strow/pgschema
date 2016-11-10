@@ -9,6 +9,7 @@ type TableMatch struct {
 	A             *db.Table
 	B             *db.Table
 	ColumnMatches []ColumnMatch
+	IndexMatches  []IndexMatch
 }
 
 // MatchTableNodes takes separate TableNode lists, and deep merges them
@@ -23,18 +24,18 @@ func MatchTables(a, b []db.TableNode) []TableMatch {
 		nodeB := findTableNode(b, tableName)
 		if nodeB != nil {
 			tableB := nodeB.Table
-			columns := MatchColumns(nodeA.ColumnNodes, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
 				A:             &tableA,
 				B:             &tableB,
-				ColumnMatches: columns,
+				ColumnMatches: MatchColumns(nodeA.ColumnNodes, nodeB.ColumnNodes),
+				IndexMatches:  MatchIndexes(nodeA.IndexNodes, nodeB.IndexNodes),
 			})
 		} else {
-			columns := MatchColumns(nodeA.ColumnNodes, nil)
 			tableMatches = append(tableMatches, TableMatch{
 				A:             &tableA,
 				B:             nil,
-				ColumnMatches: columns,
+				ColumnMatches: MatchColumns(nodeA.ColumnNodes, nil),
+				IndexMatches:  MatchIndexes(nodeA.IndexNodes, nil),
 			})
 		}
 	}
@@ -42,11 +43,11 @@ func MatchTables(a, b []db.TableNode) []TableMatch {
 		tableB := nodeB.Table
 		tableName := tableB.TableName
 		if !fromA[tableName] {
-			columns := MatchColumns(nil, nodeB.ColumnNodes)
 			tableMatches = append(tableMatches, TableMatch{
 				A:             nil,
 				B:             &tableB,
-				ColumnMatches: columns,
+				ColumnMatches: MatchColumns(nil, nodeB.ColumnNodes),
+				IndexMatches:  MatchIndexes(nil, nodeB.IndexNodes),
 			})
 		}
 	}

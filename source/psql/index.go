@@ -59,6 +59,7 @@ func LoadIndexes(conn Conn, schemaName, tableName string) ([]db.Index, error) {
 		if err != nil {
 			return nil, err
 		}
+		index.TableName = tableName
 		indexes = append(indexes, index)
 	}
 	if err := rows.Err(); err != nil {

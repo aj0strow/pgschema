@@ -16,6 +16,21 @@ func TestIndexChanges(t *testing.T) {
 	}
 	tests := []Test{
 		Test{
+			"create new index",
+			ab.IndexMatch{
+				A: &db.Index{
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+				},
+			},
+			[]Change{
+				CreateIndex{
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+				},
+			},
+		},
+		Test{
 			"drop existing index",
 			ab.IndexMatch{
 				B: &db.Index{
@@ -25,6 +40,19 @@ func TestIndexChanges(t *testing.T) {
 			[]Change{
 				DropIndex{"users_pkey"},
 			},
+		},
+		Test{
+			"existing index noop",
+			ab.IndexMatch{
+				A: &db.Index{
+					IndexName: "users_email_key",
+					Exprs:     []string{"lower(email)"},
+				},
+				B: &db.Index{
+					IndexName: "users_email_key",
+				},
+			},
+			nil,
 		},
 	}
 	for _, test := range tests {
