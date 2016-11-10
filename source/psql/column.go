@@ -21,7 +21,7 @@ func LoadColumnNodes(conn Conn, schema db.Schema, table db.Table) ([]db.ColumnNo
 
 func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	q := fmt.Sprintf(`
-		SELECT column_name, data_type
+		SELECT column_name, data_type, is_nullable
 		FROM information_schema.columns
 		WHERE table_schema = '%s'
 		AND table_name = '%s'
@@ -33,11 +33,13 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	defer rows.Close()
 	columns := []db.Column{}
 	for rows.Next() {
+		var isNullable string
 		column := db.Column{}
-		err := rows.Scan(&column.ColumnName, &column.DataType)
+		err := rows.Scan(&column.ColumnName, &column.DataType, &isNullable)
 		if err != nil {
 			return nil, err
 		}
+		column.NotNull = isNullable == "NO"
 		columns = append(columns, column)
 	}
 	if err := rows.Err(); err != nil {
