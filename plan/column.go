@@ -1,6 +1,8 @@
 package plan
 
 import (
+	"strings"
+
 	"github.com/aj0strow/pgschema/ab"
 )
 
@@ -13,7 +15,16 @@ func ColumnChanges(columnMatch ab.ColumnMatch) []Change {
 	if b == nil {
 		cs = append(cs, AddColumn{a.ColumnName, a.DataType})
 	} else if a.DataType != b.DataType {
-		cs = append(cs, AlterColumn{a.ColumnName, SetDataType{a.DataType}})
+		setType := SetDataType{a.DataType}
+		if a.CastTypeUsing == "" {
+			cs = append(cs, AlterColumn{a.ColumnName, setType})
+		} else {
+			castType := CastDataType{
+				SetDataType: setType,
+				Using:       strings.Replace(a.CastTypeUsing, "$name", a.ColumnName, -1),
+			}
+			cs = append(cs, AlterColumn{a.ColumnName, castType})
+		}
 	}
 	return cs
 }

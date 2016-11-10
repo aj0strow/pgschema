@@ -45,6 +45,16 @@ func TestChanges(t *testing.T) {
 				SetDataType{"text"},
 			},
 		},
+		AlterTable{
+			"address",
+			AlterColumn{
+				"street",
+				CastDataType{
+					Using:       "trim(street)::integer",
+					SetDataType: SetDataType{"integer"},
+				},
+			},
+		},
 	}
 	for _, change := range changes {
 		err := checkSyntax(conn, change.String())

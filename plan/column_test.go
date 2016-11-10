@@ -1,10 +1,12 @@
 package plan
 
 import (
-	"github.com/aj0strow/pgschema/ab"
-	"github.com/aj0strow/pgschema/db"
 	"reflect"
 	"testing"
+
+	"github.com/aj0strow/pgschema/ab"
+	"github.com/aj0strow/pgschema/db"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestColumnChanges(t *testing.T) {
@@ -58,11 +60,35 @@ func TestColumnChanges(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"cast column type",
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName:    "cost",
+					DataType:      "money",
+					CastTypeUsing: "($name * 100)::money",
+				},
+				B: &db.Column{
+					ColumnName: "cost",
+					DataType:   "integer",
+				},
+			},
+			[]Change{
+				AlterColumn{
+					"cost",
+					CastDataType{
+						SetDataType{"money"},
+						"(cost * 100)::money",
+					},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		changes := ColumnChanges(test.ColumnMatch)
 		if !reflect.DeepEqual(changes, test.Changes) {
 			t.Errorf("planColumnMatch => %s", test.Name)
+			spew.Dump(changes, test.Changes)
 		}
 	}
 }

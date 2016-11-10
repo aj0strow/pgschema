@@ -8,5 +8,9 @@ schema "v1" {
     column "name" {
       type = "text"
     }
+    column "views" {
+      type = "integer"
+      cast_type_using = "$name::integer"
+    }
   }
 }

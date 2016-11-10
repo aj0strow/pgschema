@@ -13,6 +13,7 @@ type Table struct {
 }
 
 type Column struct {
-	ColumnName string
-	DataType   string
+	ColumnName    string
+	DataType      string
+	CastTypeUsing string
 }

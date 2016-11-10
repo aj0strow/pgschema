@@ -23,7 +23,8 @@ type Table struct {
 }
 
 type Column struct {
-	Type string
+	Type          string
+	CastTypeUsing string `hcl:"cast_type_using"`
 }
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {
@@ -88,8 +89,9 @@ func convertTable(k string, v Table) db.TableNode {
 func convertColumn(k string, v Column) db.ColumnNode {
 	return db.ColumnNode{
 		Column: db.Column{
-			ColumnName: k,
-			DataType:   v.Type,
+			ColumnName:    k,
+			DataType:      v.Type,
+			CastTypeUsing: v.CastTypeUsing,
 		},
 	}
 }

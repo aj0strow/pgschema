@@ -126,6 +126,18 @@ func (ac AlterColumn) String() string {
 
 var _ Change = (*AlterColumn)(nil)
 
+// Change the column type and cast using a custom expression.
+type CastDataType struct {
+	SetDataType SetDataType
+	Using       string
+}
+
+func (st CastDataType) String() string {
+	return fmt.Sprintf("%s USING (%s)", st.SetDataType, st.Using)
+}
+
+var _ Change = (*CastDataType)(nil)
+
 // Change the column data type.
 type SetDataType struct {
 	DataType string
