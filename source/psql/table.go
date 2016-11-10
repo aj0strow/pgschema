@@ -16,9 +16,11 @@ func LoadTableNodes(conn Conn, schema db.Schema) ([]db.TableNode, error) {
 		if err != nil {
 			return nil, err
 		}
+		indexNodes, err := LoadIndexNodes(conn, schema, tables[i])
 		tableNodes[i] = db.TableNode{
 			Table:       tables[i],
 			ColumnNodes: columnNodes,
+			IndexNodes:  indexNodes,
 		}
 	}
 	return tableNodes, nil

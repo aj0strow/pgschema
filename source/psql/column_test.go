@@ -2,10 +2,12 @@ package psql
 
 import (
 	"fmt"
-	"github.com/aj0strow/pgschema/db"
-	"github.com/aj0strow/pgschema/temp"
 	"reflect"
 	"testing"
+
+	"github.com/aj0strow/pgschema/db"
+	"github.com/aj0strow/pgschema/temp"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestLoadColumn(t *testing.T) {
@@ -55,8 +57,8 @@ func runLoadColumn(t *testing.T, q string, c db.Column) {
 	}
 	column := cs[0]
 	if !reflect.DeepEqual(column, c) {
-		fmt.Printf("want %+v\n", c)
-		fmt.Printf("have %+v\n", column)
-		t.Errorf("invalid column for %s", q)
+		t.Errorf("invalid column")
+		t.Errorf(q)
+		spew.Dump(c, column)
 	}
 }

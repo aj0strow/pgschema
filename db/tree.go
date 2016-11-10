@@ -17,8 +17,13 @@ type SchemaNode struct {
 type TableNode struct {
 	Table       Table
 	ColumnNodes []ColumnNode
+	IndexNodes  []IndexNode
 }
 
 type ColumnNode struct {
 	Column Column
+}
+
+type IndexNode struct {
+	Index Index
 }
