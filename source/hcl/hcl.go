@@ -29,7 +29,8 @@ type Column struct {
 }
 
 type Index struct {
-	On []string
+	On     []string
+	Unique bool
 }
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {
@@ -113,6 +114,7 @@ func convertIndex(schemaName, tableName, indexName string, v Index) db.IndexNode
 			TableName: tableName,
 			IndexName: indexName,
 			Exprs:     v.On,
+			Unique:    v.Unique,
 		},
 	}
 }

@@ -23,4 +23,5 @@ type Index struct {
 	TableName string
 	IndexName string
 	Exprs     []string
+	Unique    bool
 }

@@ -42,7 +42,8 @@ func LoadIndexNodes(conn Conn, schema db.Schema, table db.Table) ([]db.IndexNode
 func LoadIndexes(conn Conn, schemaName, tableName string) ([]db.Index, error) {
 	q := fmt.Sprintf(`
 		SELECT
-			c.relname AS index_name
+			c.relname AS index_name,
+			ix.indisunique AS uniq
 		FROM pg_index as ix
 		JOIN pg_class as c ON (c.oid = ix.indexrelid)
 		WHERE ix.indrelid = '%s.%s'::regclass
@@ -55,7 +56,7 @@ func LoadIndexes(conn Conn, schemaName, tableName string) ([]db.Index, error) {
 	var indexes []db.Index
 	for rows.Next() {
 		var index db.Index
-		err := rows.Scan(&index.IndexName)
+		err := rows.Scan(&index.IndexName, &index.Unique)
 		if err != nil {
 			return nil, err
 		}

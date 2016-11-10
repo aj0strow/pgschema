@@ -28,6 +28,14 @@ func TestLoadIndexes(t *testing.T) {
 				IndexName: "myindex",
 			},
 		},
+		Test{
+			`CREATE UNIQUE INDEX users_name_key ON users (name)`,
+			db.Index{
+				TableName: "users",
+				IndexName: "users_name_key",
+				Unique:    true,
+			},
+		},
 	}
 	for _, test := range tests {
 		runIndexTest(t, test.Setup, test.Index)
