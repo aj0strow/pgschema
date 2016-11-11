@@ -25,16 +25,12 @@ func TestCreateTables(t *testing.T) {
 			`create required table`,
 			[]ab.TableMatch{
 				ab.TableMatch{
-					A: &db.Table{
-						TableName: "users",
-					},
+					A: &db.Table{},
 				},
 			},
 			[]CreateTable{
 				CreateTable{
-					Table: &db.Table{
-						TableName: "users",
-					},
+					Table: &db.Table{},
 				},
 			},
 		},
@@ -42,12 +38,8 @@ func TestCreateTables(t *testing.T) {
 			`ignore existing table`,
 			[]ab.TableMatch{
 				ab.TableMatch{
-					A: &db.Table{
-						TableName: "users",
-					},
-					B: &db.Table{
-						TableName: "users",
-					},
+					A: &db.Table{},
+					B: &db.Table{},
 				},
 			},
 			nil,
@@ -58,6 +50,51 @@ func TestCreateTables(t *testing.T) {
 		if !reflect.DeepEqual(xs, test.CreateTables) {
 			t.Errorf("createTables => %s", test.Name)
 			spew.Dump(xs, test.CreateTables)
+		}
+	}
+}
+
+func TestDropTables(t *testing.T) {
+	type Test struct {
+		Name         string
+		TableMatches []ab.TableMatch
+		DropTables   []DropTable
+	}
+	tests := []Test{
+		Test{
+			`empty table list`,
+			nil,
+			nil,
+		},
+		Test{
+			`drop existing table`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					B: &db.Table{},
+				},
+			},
+			[]DropTable{
+				DropTable{
+					Table: &db.Table{},
+				},
+			},
+		},
+		Test{
+			`ignore required table`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+				},
+			},
+			nil,
+		},
+	}
+	for _, test := range tests {
+		xs := dropTables(test.TableMatches)
+		if !reflect.DeepEqual(xs, test.DropTables) {
+			t.Errorf("dropTables => %s", test.Name)
+			spew.Dump(xs, test.DropTables)
 		}
 	}
 }
