@@ -6,7 +6,7 @@ import (
 )
 
 type AddColumn struct {
-	Column *db.Column
+	*db.Column
 }
 
 func addColumns(columns []ab.ColumnMatch) []AddColumn {
@@ -23,7 +23,7 @@ func addColumns(columns []ab.ColumnMatch) []AddColumn {
 }
 
 type DropColumn struct {
-	Column *db.Column
+	*db.Column
 }
 
 func dropColumns(columns []ab.ColumnMatch) []DropColumn {
@@ -40,7 +40,7 @@ func dropColumns(columns []ab.ColumnMatch) []DropColumn {
 }
 
 type AlterColumn struct {
-	Column      *db.Column
+	*db.Column
 	SetDataType bool
 	SetNotNull  bool
 	DropNotNull bool
