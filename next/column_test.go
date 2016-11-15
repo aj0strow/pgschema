@@ -88,3 +88,39 @@ func TestDropColumns(t *testing.T) {
 		}
 	}
 }
+
+func TestAlterColumns(t *testing.T) {
+	type Test struct {
+		Name          string
+		ColumnMatches []ab.ColumnMatch
+		AlterColumns  []AlterColumn
+	}
+	tests := []Test{
+		Test{
+			`empty columns list`,
+			nil,
+			nil,
+		},
+		Test{
+			`alter existing column`,
+			[]ab.ColumnMatch{
+				ab.ColumnMatch{
+					A: &db.Column{},
+					B: &db.Column{},
+				},
+			},
+			[]AlterColumn{
+				AlterColumn{
+					Column: &db.Column{},
+				},
+			},
+		},
+	}
+	for _, test := range tests {
+		xs := alterColumns(test.ColumnMatches)
+		if !reflect.DeepEqual(xs, test.AlterColumns) {
+			t.Errorf("alterColumns => %s", test.Name)
+			spew.Dump(xs, test.AlterColumns)
+		}
+	}
+}
