@@ -43,6 +43,8 @@ type AlterColumn struct {
 	Column      *db.Column
 	SetNotNull  bool
 	DropNotNull bool
+	SetDefault  *SetDefault
+	DropDefault bool
 }
 
 func alterColumns(columns []ab.ColumnMatch) []AlterColumn {
@@ -61,5 +63,7 @@ func alterColumn(a, b *db.Column) AlterColumn {
 		Column:      a,
 		SetNotNull:  setNotNull(a, b),
 		DropNotNull: dropNotNull(a, b),
+		SetDefault:  setDefault(a, b),
+		DropDefault: dropDefault(a, b),
 	}
 }
