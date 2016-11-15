@@ -176,7 +176,7 @@ func TestAlterTables(t *testing.T) {
 			nil,
 		},
 		Test{
-			`add columns`,
+			`add new columns`,
 			[]ab.TableMatch{
 				ab.TableMatch{
 					A: &db.Table{},
@@ -200,7 +200,7 @@ func TestAlterTables(t *testing.T) {
 			},
 		},
 		Test{
-			`drop columns`,
+			`drop old columns`,
 			[]ab.TableMatch{
 				ab.TableMatch{
 					A: &db.Table{},
@@ -217,6 +217,31 @@ func TestAlterTables(t *testing.T) {
 					Table: &db.Table{},
 					DropColumns: []DropColumn{
 						DropColumn{
+							Column: &db.Column{},
+						},
+					},
+				},
+			},
+		},
+		Test{
+			`alter existing columns`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+					ColumnMatches: []ab.ColumnMatch{
+						ab.ColumnMatch{
+							A: &db.Column{},
+							B: &db.Column{},
+						},
+					},
+				},
+			},
+			[]AlterTable{
+				AlterTable{
+					Table: &db.Table{},
+					AlterColumns: []AlterColumn{
+						AlterColumn{
 							Column: &db.Column{},
 						},
 					},
