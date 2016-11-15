@@ -21,3 +21,20 @@ func createIndexes(indexes []ab.IndexMatch) []CreateIndex {
 	}
 	return xs
 }
+
+type DropIndex struct {
+	Index *db.Index
+}
+
+func dropIndexes(indexes []ab.IndexMatch) []DropIndex {
+	var xs []DropIndex
+	for _, index := range indexes {
+		if index.A == nil {
+			x := DropIndex{
+				Index: index.B,
+			}
+			xs = append(xs, x)
+		}
+	}
+	return xs
+}
