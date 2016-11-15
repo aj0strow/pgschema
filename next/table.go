@@ -45,6 +45,7 @@ func dropTables(tables []ab.TableMatch) []DropTable {
 type AlterTable struct {
 	*db.Table
 	AddColumns    []AddColumn
+	DropColumns   []DropColumn
 	CreateIndexes []CreateIndex
 	DropIndexes   []DropIndex
 }
@@ -56,6 +57,7 @@ func alterTables(tables []ab.TableMatch) []AlterTable {
 			x := AlterTable{
 				Table:         table.A,
 				AddColumns:    addColumns(table.ColumnMatches),
+				DropColumns:   dropColumns(table.ColumnMatches),
 				CreateIndexes: createIndexes(table.IndexMatches),
 				DropIndexes:   dropIndexes(table.IndexMatches),
 			}

@@ -200,6 +200,30 @@ func TestAlterTables(t *testing.T) {
 			},
 		},
 		Test{
+			`drop columns`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+					ColumnMatches: []ab.ColumnMatch{
+						ab.ColumnMatch{
+							B: &db.Column{},
+						},
+					},
+				},
+			},
+			[]AlterTable{
+				AlterTable{
+					Table: &db.Table{},
+					DropColumns: []DropColumn{
+						DropColumn{
+							Column: &db.Column{},
+						},
+					},
+				},
+			},
+		},
+		Test{
 			`create new indexes`,
 			[]ab.TableMatch{
 				ab.TableMatch{
