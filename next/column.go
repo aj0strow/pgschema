@@ -40,18 +40,26 @@ func dropColumns(columns []ab.ColumnMatch) []DropColumn {
 }
 
 type AlterColumn struct {
-	Column *db.Column
+	Column      *db.Column
+	SetNotNull  bool
+	DropNotNull bool
 }
 
 func alterColumns(columns []ab.ColumnMatch) []AlterColumn {
 	var xs []AlterColumn
 	for _, column := range columns {
 		if column.A != nil && column.B != nil {
-			x := AlterColumn{
-				Column: column.A,
-			}
+			x := alterColumn(column.A, column.B)
 			xs = append(xs, x)
 		}
 	}
 	return xs
+}
+
+func alterColumn(a, b *db.Column) AlterColumn {
+	return AlterColumn{
+		Column:      a,
+		SetNotNull:  setNotNull(a, b),
+		DropNotNull: dropNotNull(a, b),
+	}
 }
