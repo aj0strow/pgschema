@@ -64,7 +64,7 @@ func TestCreateSchemas(t *testing.T) {
 
 func TestUpdateSchemas(t *testing.T) {
 	type Test struct {
-		Name string
+		Name          string
 		SchemaMatches []ab.SchemaMatch
 		UpdateSchemas []UpdateSchema
 	}

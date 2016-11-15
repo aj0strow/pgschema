@@ -31,7 +31,7 @@ func updateSchemas(schemas []ab.SchemaMatch) []UpdateSchema {
 	for _, schema := range schemas {
 		if schema.A != nil && schema.B != nil {
 			x := UpdateSchema{
-				Schema:       schema.A,
+				Schema: schema.A,
 			}
 			xs = append(xs, x)
 		}
