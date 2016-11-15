@@ -6,7 +6,8 @@ import (
 )
 
 type CreateSchema struct {
-	Schema *db.Schema
+	Schema       *db.Schema
+	CreateTables []CreateTable
 }
 
 func createSchemas(schemas []ab.SchemaMatch) []CreateSchema {
@@ -14,7 +15,8 @@ func createSchemas(schemas []ab.SchemaMatch) []CreateSchema {
 	for _, schema := range schemas {
 		if schema.B == nil {
 			x := CreateSchema{
-				Schema: schema.A,
+				Schema:       schema.A,
+				CreateTables: createTables(schema.TableMatches),
 			}
 			xs = append(xs, x)
 		}
@@ -23,7 +25,8 @@ func createSchemas(schemas []ab.SchemaMatch) []CreateSchema {
 }
 
 type UpdateSchema struct {
-	Schema *db.Schema
+	Schema       *db.Schema
+	CreateTables []CreateTable
 }
 
 func updateSchemas(schemas []ab.SchemaMatch) []UpdateSchema {
@@ -31,7 +34,8 @@ func updateSchemas(schemas []ab.SchemaMatch) []UpdateSchema {
 	for _, schema := range schemas {
 		if schema.A != nil && schema.B != nil {
 			x := UpdateSchema{
-				Schema: schema.A,
+				Schema:       schema.A,
+				CreateTables: createTables(schema.TableMatches),
 			}
 			xs = append(xs, x)
 		}

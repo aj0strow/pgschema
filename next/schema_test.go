@@ -52,6 +52,29 @@ func TestCreateSchemas(t *testing.T) {
 			},
 			nil,
 		},
+		Test{
+			`create tables for schema`,
+			[]ab.SchemaMatch{
+				ab.SchemaMatch{
+					A: &db.Schema{},
+					TableMatches: []ab.TableMatch{
+						ab.TableMatch{
+							A: &db.Table{},
+						},
+					},
+				},
+			},
+			[]CreateSchema{
+				CreateSchema{
+					Schema: &db.Schema{},
+					CreateTables: []CreateTable{
+						CreateTable{
+							Table: &db.Table{},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		xs := createSchemas(test.SchemaMatches)
@@ -82,6 +105,30 @@ func TestUpdateSchemas(t *testing.T) {
 				},
 			},
 			nil,
+		},
+		Test{
+			`create tables`,
+			[]ab.SchemaMatch{
+				ab.SchemaMatch{
+					A: &db.Schema{},
+					B: &db.Schema{},
+					TableMatches: []ab.TableMatch{
+						ab.TableMatch{
+							A: &db.Table{},
+						},
+					},
+				},
+			},
+			[]UpdateSchema{
+				UpdateSchema{
+					Schema: &db.Schema{},
+					CreateTables: []CreateTable{
+						CreateTable{
+							Table: &db.Table{},
+						},
+					},
+				},
+			},
 		},
 	}
 	for _, test := range tests {
