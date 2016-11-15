@@ -10,6 +10,10 @@ type UpdateDatabase struct {
 	UpdateSchemas    []UpdateSchema
 }
 
+func PlanUpdate(database ab.DatabaseMatch) UpdateDatabase {
+	return updateDatabase(database)
+}
+
 func updateDatabase(database ab.DatabaseMatch) UpdateDatabase {
 	return UpdateDatabase{
 		CreateExtensions: createExtensions(database.ExtensionMatches),

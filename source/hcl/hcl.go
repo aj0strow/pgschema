@@ -9,33 +9,33 @@ import (
 )
 
 type Database struct {
-	Extension map[string]Extension
-	Schema    map[string]Schema
+	Extension map[string]Extension `hcl:"extension"`
+	Schema    map[string]Schema `hcl:"schema"`
 }
 
 type Extension struct{}
 
 type Schema struct {
-	Table map[string]Table
+	Table map[string]Table `hcl:"table"`
 }
 
 type Table struct {
 	PrimaryKey []string `hcl:"primary_key"`
-	Column     map[string]Column
-	Index      map[string]Index
+	Column     map[string]Column `hcl:"column"`
+	Index      map[string]Index `hcl:"index"`
 }
 
 type Column struct {
-	Type          string
+	Type          string `hcl:"type"`
 	NotNull       bool   `hcl:"not_null"`
 	CastTypeUsing string `hcl:"cast_type_using"`
-	Default       string
+	Default       string `hcl:"default"`
 	PrimaryKey    bool `hcl:"primary_key"`
 }
 
 type Index struct {
-	On     []string
-	Unique bool
+	On     []string `hcl:"on"`
+	Unique bool `hcl:"unique"`
 }
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {

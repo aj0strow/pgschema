@@ -13,3 +13,7 @@ var _ Change = SetNotNull
 const DropNotNull = Raw(`DROP NOT NULL`)
 
 var _ Change = DropNotNull
+
+const DropDefault = Raw(`DROP DEFAULT`)
+
+var _ Change = DropDefault

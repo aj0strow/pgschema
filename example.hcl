@@ -13,9 +13,12 @@ schema "v1" {
       type = "text"
       not_null = true
     }
-    column "view_count" {
-      type = "integer"
-      cast_type_using = "views::integer"
+    column "views" {
+      type = "text"
+    }
+    index "users_email_key" {
+      on = [ "lower(email)" ]
+      unique = true
     }
   }
 }

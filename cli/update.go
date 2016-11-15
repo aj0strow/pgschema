@@ -2,8 +2,7 @@ package cli
 
 import (
 	"flag"
-	"github.com/aj0strow/pgschema/ab"
-	"github.com/aj0strow/pgschema/plan"
+	"github.com/aj0strow/pgschema/order"
 	"github.com/aj0strow/pgschema/source/hcl"
 	"github.com/aj0strow/pgschema/source/psql"
 	"github.com/jackc/pgx"
@@ -41,7 +40,7 @@ func (cmd *Update) Run(args []string) int {
 		cmd.Error(err.Error())
 		return 1
 	}
-	A, err := hcl.ParseBytes(data)
+	a, err := hcl.ParseBytes(data)
 	if err != nil {
 		cmd.Error(err.Error())
 		return 1
@@ -75,7 +74,7 @@ func (cmd *Update) Run(args []string) int {
 		return 1
 	}
 	defer conn.Close()
-	B, err := psql.LoadDatabaseNode(conn)
+	b, err := psql.LoadDatabaseNode(conn)
 	if err != nil {
 		cmd.Error(err.Error())
 		return 1
@@ -87,16 +86,14 @@ func (cmd *Update) Run(args []string) int {
 	}
 	defer tx.Rollback()
 
-	databaseMatch := ab.MatchDatabase(A, B)
-	changes := plan.DatabaseChanges(databaseMatch)
-	runner := &plan.Runner{
-		Conn:   &SimpleTx{tx},
-		Logger: cmd,
-	}
-	err = runner.Run(changes)
-	if err != nil {
-		cmd.Error(err.Error())
-		return 1
+	changes := order.Changes(a, b)
+	for _, change := range changes {
+		cmd.Info(change.String())
+		_, err := tx.Exec(change.String())
+		if err != nil {
+			cmd.Error(err.Error())
+			return 1
+		}
 	}
 	err = tx.Commit()
 	if err != nil {
