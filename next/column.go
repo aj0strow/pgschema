@@ -41,9 +41,10 @@ func dropColumns(columns []ab.ColumnMatch) []DropColumn {
 
 type AlterColumn struct {
 	Column      *db.Column
+	SetDataType bool
 	SetNotNull  bool
 	DropNotNull bool
-	SetDefault  *SetDefault
+	SetDefault  bool
 	DropDefault bool
 }
 

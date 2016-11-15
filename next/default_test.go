@@ -1,7 +1,6 @@
 package next
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/aj0strow/pgschema/db"
@@ -12,7 +11,7 @@ func TestSetDefault(t *testing.T) {
 		Name       string
 		A          *db.Column
 		B          *db.Column
-		SetDefault *SetDefault
+		SetDefault bool
 	}
 	tests := []Test{
 		Test{
@@ -23,13 +22,13 @@ func TestSetDefault(t *testing.T) {
 			&db.Column{
 				Default: "now()",
 			},
-			nil,
+			false,
 		},
 		Test{
 			`ignore missing defaults`,
 			&db.Column{},
 			&db.Column{},
-			nil,
+			false,
 		},
 		Test{
 			`ignore old defaults`,
@@ -37,7 +36,7 @@ func TestSetDefault(t *testing.T) {
 			&db.Column{
 				Default: "0",
 			},
-			nil,
+			false,
 		},
 		Test{
 			`set new default`,
@@ -45,12 +44,11 @@ func TestSetDefault(t *testing.T) {
 				Default: "0",
 			},
 			&db.Column{},
-			&SetDefault{"0"},
+			true,
 		},
 	}
 	for _, test := range tests {
-		x := setDefault(test.A, test.B)
-		if !reflect.DeepEqual(x, test.SetDefault) {
+		if setDefault(test.A, test.B) != test.SetDefault {
 			t.Errorf("setDefault => %s", test.Name)
 		}
 	}
