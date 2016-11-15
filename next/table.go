@@ -7,6 +7,7 @@ import (
 
 type CreateTable struct {
 	*db.Table
+	AddColumns    []AddColumn
 	CreateIndexes []CreateIndex
 }
 
@@ -16,6 +17,7 @@ func createTables(tables []ab.TableMatch) []CreateTable {
 		if table.B == nil {
 			x := CreateTable{
 				Table:         table.A,
+				AddColumns:    addColumns(table.ColumnMatches),
 				CreateIndexes: createIndexes(table.IndexMatches),
 			}
 			xs = append(xs, x)
