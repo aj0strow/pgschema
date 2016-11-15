@@ -107,7 +107,7 @@ func TestUpdateSchemas(t *testing.T) {
 			nil,
 		},
 		Test{
-			`create tables`,
+			`create new tables`,
 			[]ab.SchemaMatch{
 				ab.SchemaMatch{
 					A: &db.Schema{},
@@ -131,7 +131,7 @@ func TestUpdateSchemas(t *testing.T) {
 			},
 		},
 		Test{
-			`drop tables for schema`,
+			`drop old tables`,
 			[]ab.SchemaMatch{
 				ab.SchemaMatch{
 					A: &db.Schema{},
@@ -148,6 +148,31 @@ func TestUpdateSchemas(t *testing.T) {
 					Schema: &db.Schema{},
 					DropTables: []DropTable{
 						DropTable{
+							Table: &db.Table{},
+						},
+					},
+				},
+			},
+		},
+		Test{
+			`alter existing tables`,
+			[]ab.SchemaMatch{
+				ab.SchemaMatch{
+					A: &db.Schema{},
+					B: &db.Schema{},
+					TableMatches: []ab.TableMatch{
+						ab.TableMatch{
+							A: &db.Table{},
+							B: &db.Table{},
+						},
+					},
+				},
+			},
+			[]UpdateSchema{
+				UpdateSchema{
+					Schema: &db.Schema{},
+					AlterTables: []AlterTable{
+						AlterTable{
 							Table: &db.Table{},
 						},
 					},
