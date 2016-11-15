@@ -176,6 +176,30 @@ func TestAlterTables(t *testing.T) {
 			nil,
 		},
 		Test{
+			`add columns`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+					ColumnMatches: []ab.ColumnMatch{
+						ab.ColumnMatch{
+							A: &db.Column{},
+						},
+					},
+				},
+			},
+			[]AlterTable{
+				AlterTable{
+					Table: &db.Table{},
+					AddColumns: []AddColumn{
+						AddColumn{
+							Column: &db.Column{},
+						},
+					},
+				},
+			},
+		},
+		Test{
 			`create new indexes`,
 			[]ab.TableMatch{
 				ab.TableMatch{
