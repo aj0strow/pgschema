@@ -42,15 +42,18 @@ func dropTables(tables []ab.TableMatch) []DropTable {
 
 type AlterTable struct {
 	*db.Table
+	CreateIndexes []CreateIndex
 }
 
 func alterTables(tables []ab.TableMatch) []AlterTable {
 	var xs []AlterTable
 	for _, table := range tables {
 		if table.A != nil && table.B != nil {
-			xs = append(xs, AlterTable{
-				Table: table.A,
-			})
+			x := AlterTable{
+				Table:         table.A,
+				CreateIndexes: createIndexes(table.IndexMatches),
+			}
+			xs = append(xs, x)
 		}
 	}
 	return xs

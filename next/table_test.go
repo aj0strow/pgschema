@@ -121,3 +121,67 @@ func TestDropTables(t *testing.T) {
 		}
 	}
 }
+
+func TestAlterTables(t *testing.T) {
+	type Test struct {
+		Name         string
+		TableMatches []ab.TableMatch
+		AlterTables  []AlterTable
+	}
+	tests := []Test{
+		Test{
+			`empty table matches`,
+			nil,
+			nil,
+		},
+		Test{
+			`ignore new tables`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+				},
+			},
+			nil,
+		},
+		Test{
+			`ignore old tables`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					B: &db.Table{},
+				},
+			},
+			nil,
+		},
+		Test{
+			`create new indexes`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+					IndexMatches: []ab.IndexMatch{
+						ab.IndexMatch{
+							A: &db.Index{},
+						},
+					},
+				},
+			},
+			[]AlterTable{
+				AlterTable{
+					Table: &db.Table{},
+					CreateIndexes: []CreateIndex{
+						CreateIndex{
+							Index: &db.Index{},
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, test := range tests {
+		xs := alterTables(test.TableMatches)
+		if !reflect.DeepEqual(xs, test.AlterTables) {
+			t.Errorf("alterTables => %s", test.Name)
+			spew.Dump(xs, test.AlterTables)
+		}
+	}
+}
