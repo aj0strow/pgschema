@@ -7,15 +7,18 @@ import (
 
 type CreateTable struct {
 	*db.Table
+	CreateIndexes []CreateIndex
 }
 
 func createTables(tables []ab.TableMatch) []CreateTable {
 	var xs []CreateTable
 	for _, table := range tables {
 		if table.B == nil {
-			xs = append(xs, CreateTable{
-				Table: table.A,
-			})
+			x := CreateTable{
+				Table:         table.A,
+				CreateIndexes: createIndexes(table.IndexMatches),
+			}
+			xs = append(xs, x)
 		}
 	}
 	return xs

@@ -44,6 +44,29 @@ func TestCreateTables(t *testing.T) {
 			},
 			nil,
 		},
+		Test{
+			`create indexes`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					IndexMatches: []ab.IndexMatch{
+						ab.IndexMatch{
+							A: &db.Index{},
+						},
+					},
+				},
+			},
+			[]CreateTable{
+				CreateTable{
+					Table: &db.Table{},
+					CreateIndexes: []CreateIndex{
+						CreateIndex{
+							Index: &db.Index{},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		xs := createTables(test.TableMatches)
