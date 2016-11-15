@@ -11,8 +11,8 @@ type Change interface {
 func Changes(database next.UpdateDatabase) []Change {
 	var xs []Change
 
-	// Drop old tables.
 	for _, updateSchema := range database.UpdateSchemas {
+		// Drop old tables.
 		for _, dropTable := range updateSchema.DropTables {
 			x := DropTable{
 				SchemaName: updateSchema.SchemaName,
@@ -20,10 +20,8 @@ func Changes(database next.UpdateDatabase) []Change {
 			}
 			xs = append(xs, x)
 		}
-	}
 
-	// Alter existing tables.
-	for _, updateSchema := range database.UpdateSchemas {
+		// Alter existing tables.
 		for _, alterTable := range updateSchema.AlterTables {
 
 			// Drop old indexes.
@@ -65,6 +63,43 @@ func Changes(database next.UpdateDatabase) []Change {
 						SchemaName: updateSchema.SchemaName,
 						TableName:  alterTable.TableName,
 						Change:     change,
+					}
+					xs = append(xs, x)
+				}
+			}
+
+			// Add new columns.
+			for _, addColumn := range alterTable.AddColumns {
+				x := AlterTable{
+					SchemaName: updateSchema.SchemaName,
+					TableName:  alterTable.TableName,
+					Change: AddColumn{
+						ColumnName: addColumn.ColumnName,
+						DataType:   addColumn.DataType,
+						NotNull:    addColumn.NotNull,
+						Default:    addColumn.Default,
+					},
+				}
+				xs = append(xs, x)
+			}
+
+			// Create new indexes.
+			for _, createIndex := range alterTable.CreateIndexes {
+				if createIndex.Primary {
+					x := AlterTable{
+						SchemaName: updateSchema.SchemaName,
+						TableName:  alterTable.TableName,
+						Change: AddPrimaryKey{
+							Columns: createIndex.Exprs,
+						},
+					}
+					xs = append(xs, x)
+				} else {
+					x := CreateIndex{
+						SchemaName: updateSchema.SchemaName,
+						IndexName:  createIndex.IndexName,
+						Exprs:      createIndex.Exprs,
+						Unique:     createIndex.Unique,
 					}
 					xs = append(xs, x)
 				}
