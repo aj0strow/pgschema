@@ -1,4 +1,4 @@
-package next
+package plan
 
 import (
 	"github.com/aj0strow/pgschema/ab"
@@ -10,7 +10,7 @@ type UpdateDatabase struct {
 	UpdateSchemas    []UpdateSchema
 }
 
-func PlanUpdate(database ab.DatabaseMatch) UpdateDatabase {
+func Update(database ab.DatabaseMatch) UpdateDatabase {
 	return updateDatabase(database)
 }
 

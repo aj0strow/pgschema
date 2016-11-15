@@ -2,8 +2,8 @@ package order
 
 import (
 	"github.com/aj0strow/pgschema/ab"
-	"github.com/aj0strow/pgschema/next"
 	"github.com/aj0strow/pgschema/db"
+	"github.com/aj0strow/pgschema/plan"
 )
 
 type Change interface {
@@ -11,10 +11,10 @@ type Change interface {
 }
 
 func Changes(a, b db.DatabaseNode) []Change {
-	return updateDatabase(next.PlanUpdate(ab.MatchDatabase(a, b)))
+	return updateDatabase(plan.Update(ab.MatchDatabase(a, b)))
 }
 
-func updateDatabase(database next.UpdateDatabase) []Change {
+func updateDatabase(database plan.UpdateDatabase) []Change {
 	var xs []Change
 	for _, extension := range database.CreateExtensions {
 		xs = append(xs, CreateExtension{
@@ -30,7 +30,7 @@ func updateDatabase(database next.UpdateDatabase) []Change {
 	return xs
 }
 
-func updateSchemaStruct(schema next.UpdateSchema) []Change {
+func updateSchemaStruct(schema plan.UpdateSchema) []Change {
 	var xs []Change
 	xs = append(xs, dropTableSlice(schema.Schema, schema.DropTables)...)
 	xs = append(xs, alterTableSlice(schema.Schema, schema.AlterTables)...)
@@ -38,7 +38,7 @@ func updateSchemaStruct(schema next.UpdateSchema) []Change {
 	return xs
 }
 
-func createSchemaStruct(schema next.CreateSchema) []Change {
+func createSchemaStruct(schema plan.CreateSchema) []Change {
 	var xs []Change
 	xs = append(xs, CreateSchema{
 		SchemaName: schema.SchemaName,
@@ -47,18 +47,18 @@ func createSchemaStruct(schema next.CreateSchema) []Change {
 	return xs
 }
 
-func createTableSlice(schema *db.Schema, tables []next.CreateTable) []Change {
+func createTableSlice(schema *db.Schema, tables []plan.CreateTable) []Change {
 	var xs []Change
 	for _, table := range tables {
 		xs = append(xs, CreateTable{
 			SchemaName: schema.SchemaName,
-			TableName: table.TableName,
+			TableName:  table.TableName,
 		})
 		for _, change := range addColumnSlice(table.AddColumns) {
 			xs = append(xs, AlterTable{
 				SchemaName: schema.SchemaName,
-				TableName: table.TableName,
-				Change: change,
+				TableName:  table.TableName,
+				Change:     change,
 			})
 		}
 		xs = append(xs, createIndexSlice(schema, table.Table, table.CreateIndexes)...)
@@ -66,25 +66,25 @@ func createTableSlice(schema *db.Schema, tables []next.CreateTable) []Change {
 	return xs
 }
 
-func alterTableSlice(schema *db.Schema, tables []next.AlterTable) []Change {
+func alterTableSlice(schema *db.Schema, tables []plan.AlterTable) []Change {
 	var xs []Change
 	for _, table := range tables {
 		xs = append(xs, dropIndexSlice(schema, table.Table, table.DropIndexes)...)
-		
+
 		for _, change := range alterTableColumns(table) {
 			xs = append(xs, AlterTable{
 				SchemaName: schema.SchemaName,
 				TableName:  table.TableName,
-				Change: change,
+				Change:     change,
 			})
 		}
-		
+
 		xs = append(xs, createIndexSlice(schema, table.Table, table.CreateIndexes)...)
 	}
 	return xs
 }
 
-func alterTableColumns(table next.AlterTable) []Change {
+func alterTableColumns(table plan.AlterTable) []Change {
 	var xs []Change
 	xs = append(xs, dropColumnSlice(table.DropColumns)...)
 	xs = append(xs, alterColumnSlice(table.AlterColumns)...)
@@ -92,18 +92,18 @@ func alterTableColumns(table next.AlterTable) []Change {
 	return xs
 }
 
-func dropTableSlice(schema *db.Schema, tables []next.DropTable) []Change {
+func dropTableSlice(schema *db.Schema, tables []plan.DropTable) []Change {
 	var xs []Change
 	for _, table := range tables {
 		xs = append(xs, DropTable{
 			SchemaName: schema.SchemaName,
-			TableName: table.TableName,
+			TableName:  table.TableName,
 		})
 	}
 	return xs
 }
 
-func createIndexSlice(schema *db.Schema, table *db.Table, indexes []next.CreateIndex) []Change {
+func createIndexSlice(schema *db.Schema, table *db.Table, indexes []plan.CreateIndex) []Change {
 	var xs []Change
 	for _, index := range indexes {
 		xs = append(xs, createIndexStruct(schema, table, index.Index))
@@ -115,7 +115,7 @@ func createIndexStruct(schema *db.Schema, table *db.Table, index *db.Index) Chan
 	if index.Primary {
 		return AlterTable{
 			SchemaName: schema.SchemaName,
-			TableName: table.TableName,
+			TableName:  table.TableName,
 			Change: AddPrimaryKey{
 				Columns: index.Exprs,
 			},
@@ -123,15 +123,15 @@ func createIndexStruct(schema *db.Schema, table *db.Table, index *db.Index) Chan
 	} else {
 		return CreateIndex{
 			SchemaName: schema.SchemaName,
-			TableName: table.TableName,
-			IndexName: index.IndexName,
-			Exprs: index.Exprs,
-			Unique: index.Unique,
+			TableName:  table.TableName,
+			IndexName:  index.IndexName,
+			Exprs:      index.Exprs,
+			Unique:     index.Unique,
 		}
 	}
 }
 
-func dropIndexSlice(schema *db.Schema, table *db.Table, indexes []next.DropIndex) []Change {
+func dropIndexSlice(schema *db.Schema, table *db.Table, indexes []plan.DropIndex) []Change {
 	var xs []Change
 	for _, index := range indexes {
 		xs = append(xs, dropIndexStruct(schema, table, index.Index))
@@ -156,7 +156,7 @@ func dropIndexStruct(schema *db.Schema, table *db.Table, index *db.Index) Change
 	}
 }
 
-func addColumnSlice(columns []next.AddColumn) []Change {
+func addColumnSlice(columns []plan.AddColumn) []Change {
 	var xs []Change
 	for _, column := range columns {
 		xs = append(xs, AddColumn{
@@ -169,20 +169,20 @@ func addColumnSlice(columns []next.AddColumn) []Change {
 	return xs
 }
 
-func alterColumnSlice(columns []next.AlterColumn) []Change {
+func alterColumnSlice(columns []plan.AlterColumn) []Change {
 	var xs []Change
 	for _, column := range columns {
 		for _, change := range alterColumnStruct(column) {
 			xs = append(xs, AlterColumn{
 				ColumnName: column.ColumnName,
-				Change: change,
+				Change:     change,
 			})
 		}
 	}
 	return xs
 }
 
-func alterColumnStruct(column next.AlterColumn) []Change {
+func alterColumnStruct(column plan.AlterColumn) []Change {
 	var xs []Change
 	if column.DropDefault {
 		xs = append(xs, DropDefault)
@@ -205,7 +205,7 @@ func alterColumnStruct(column next.AlterColumn) []Change {
 	return xs
 }
 
-func dropColumnSlice(columns []next.DropColumn) []Change {
+func dropColumnSlice(columns []plan.DropColumn) []Change {
 	var xs []Change
 	for _, column := range columns {
 		xs = append(xs, DropColumn{

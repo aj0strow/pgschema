@@ -6,7 +6,7 @@ import (
 
 type CreateTable struct {
 	SchemaName string
-	TableName string
+	TableName  string
 }
 
 func (x CreateTable) String() string {

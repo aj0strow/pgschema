@@ -3,7 +3,7 @@ package order
 import (
 	"fmt"
 	"testing"
-	
+
 	"github.com/aj0strow/pgschema/temp"
 	"github.com/jackc/pgx"
 )
@@ -31,35 +31,35 @@ func TestSyntax(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer conn.Close()
-	
+
 	changes := []Change{
 		CreateSchema{
 			SchemaName: conn.SchemaName,
 		},
 		CreateTable{
 			SchemaName: "public",
-			TableName: "users",
+			TableName:  "users",
 		},
 		DropTable{
 			SchemaName: "public",
-			TableName: "customers",
+			TableName:  "customers",
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "laywers",
+			TableName:  "laywers",
 			Change: AddColumn{
 				ColumnName: "name",
-				DataType: "text",
+				DataType:   "text",
 			},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "programmers",
-			Change: DropColumn{"weekends"},
+			TableName:  "programmers",
+			Change:     DropColumn{"weekends"},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "toronto",
+			TableName:  "toronto",
 			Change: AlterColumn{
 				ColumnName: "house",
 				Change: SetDataType{
@@ -69,63 +69,63 @@ func TestSyntax(t *testing.T) {
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "address",
+			TableName:  "address",
 			Change: AlterColumn{
 				ColumnName: "street",
 				Change: SetDataType{
 					DataType: "integer",
-					Using:       "trim(street)::integer",
+					Using:    "trim(street)::integer",
 				},
 			},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "address",
+			TableName:  "address",
 			Change: AlterColumn{
 				ColumnName: "street",
-				Change: SetNotNull,
+				Change:     SetNotNull,
 			},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "address",
+			TableName:  "address",
 			Change: AlterColumn{
 				ColumnName: "street",
-				Change: DropNotNull,
+				Change:     DropNotNull,
 			},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "address",
+			TableName:  "address",
 			Change: AlterColumn{
 				ColumnName: "street",
-				Change: SetDefault{"'placeholder'"},
+				Change:     SetDefault{"'placeholder'"},
 			},
 		},
 		AlterTable{
 			SchemaName: "public",
-			TableName: "address",
+			TableName:  "address",
 			Change: AlterColumn{
 				ColumnName: "street",
-				Change: DropDefault,
+				Change:     DropDefault,
 			},
 		},
 		CreateIndex{
 			SchemaName: "public",
-			TableName: "users",
-			IndexName: "users_email_idx",
-			Exprs:     []string{"lower(email)"},
+			TableName:  "users",
+			IndexName:  "users_email_idx",
+			Exprs:      []string{"lower(email)"},
 		},
 		CreateIndex{
 			SchemaName: "public",
-			TableName: "users",
-			IndexName: "users_email_idx",
-			Exprs:     []string{"lower(email)"},
-			Unique:    true,
+			TableName:  "users",
+			IndexName:  "users_email_idx",
+			Exprs:      []string{"lower(email)"},
+			Unique:     true,
 		},
 		DropIndex{
 			SchemaName: "public",
-			IndexName: "users_email_key",
+			IndexName:  "users_email_key",
 		},
 	}
 	for _, change := range changes {

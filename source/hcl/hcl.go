@@ -10,7 +10,7 @@ import (
 
 type Database struct {
 	Extension map[string]Extension `hcl:"extension"`
-	Schema    map[string]Schema `hcl:"schema"`
+	Schema    map[string]Schema    `hcl:"schema"`
 }
 
 type Extension struct{}
@@ -20,9 +20,9 @@ type Schema struct {
 }
 
 type Table struct {
-	PrimaryKey []string `hcl:"primary_key"`
+	PrimaryKey []string          `hcl:"primary_key"`
 	Column     map[string]Column `hcl:"column"`
-	Index      map[string]Index `hcl:"index"`
+	Index      map[string]Index  `hcl:"index"`
 }
 
 type Column struct {
@@ -30,12 +30,12 @@ type Column struct {
 	NotNull       bool   `hcl:"not_null"`
 	CastTypeUsing string `hcl:"cast_type_using"`
 	Default       string `hcl:"default"`
-	PrimaryKey    bool `hcl:"primary_key"`
+	PrimaryKey    bool   `hcl:"primary_key"`
 }
 
 type Index struct {
 	On     []string `hcl:"on"`
-	Unique bool `hcl:"unique"`
+	Unique bool     `hcl:"unique"`
 }
 
 func ParseBytes(bs []byte) (db.DatabaseNode, error) {
