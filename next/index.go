@@ -6,7 +6,7 @@ import (
 )
 
 type CreateIndex struct {
-	Index *db.Index
+	*db.Index
 }
 
 func createIndexes(indexes []ab.IndexMatch) []CreateIndex {
@@ -23,7 +23,7 @@ func createIndexes(indexes []ab.IndexMatch) []CreateIndex {
 }
 
 type DropIndex struct {
-	Index *db.Index
+	*db.Index
 }
 
 func dropIndexes(indexes []ab.IndexMatch) []DropIndex {

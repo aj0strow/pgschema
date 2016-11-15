@@ -6,7 +6,7 @@ import (
 )
 
 type CreateSchema struct {
-	Schema       *db.Schema
+	*db.Schema
 	CreateTables []CreateTable
 }
 
@@ -25,7 +25,7 @@ func createSchemas(schemas []ab.SchemaMatch) []CreateSchema {
 }
 
 type UpdateSchema struct {
-	Schema       *db.Schema
+	*db.Schema
 	CreateTables []CreateTable
 	AlterTables  []AlterTable
 	DropTables   []DropTable
