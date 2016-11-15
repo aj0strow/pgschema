@@ -130,6 +130,30 @@ func TestUpdateSchemas(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			`drop tables for schema`,
+			[]ab.SchemaMatch{
+				ab.SchemaMatch{
+					A: &db.Schema{},
+					B: &db.Schema{},
+					TableMatches: []ab.TableMatch{
+						ab.TableMatch{
+							B: &db.Table{},
+						},
+					},
+				},
+			},
+			[]UpdateSchema{
+				UpdateSchema{
+					Schema: &db.Schema{},
+					DropTables: []DropTable{
+						DropTable{
+							Table: &db.Table{},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		xs := updateSchemas(test.SchemaMatches)

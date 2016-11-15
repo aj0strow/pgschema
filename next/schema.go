@@ -27,6 +27,7 @@ func createSchemas(schemas []ab.SchemaMatch) []CreateSchema {
 type UpdateSchema struct {
 	Schema       *db.Schema
 	CreateTables []CreateTable
+	DropTables   []DropTable
 }
 
 func updateSchemas(schemas []ab.SchemaMatch) []UpdateSchema {
@@ -36,6 +37,7 @@ func updateSchemas(schemas []ab.SchemaMatch) []UpdateSchema {
 			x := UpdateSchema{
 				Schema:       schema.A,
 				CreateTables: createTables(schema.TableMatches),
+				DropTables:   dropTables(schema.TableMatches),
 			}
 			xs = append(xs, x)
 		}
