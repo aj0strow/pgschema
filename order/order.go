@@ -22,9 +22,11 @@ func Changes(database next.UpdateDatabase) []Change {
 		}
 	}
 
-	// Drop old indexes.
+	// Alter existing tables.
 	for _, updateSchema := range database.UpdateSchemas {
 		for _, alterTable := range updateSchema.AlterTables {
+
+			// Drop old indexes.
 			for _, dropIndex := range alterTable.DropIndexes {
 				if dropIndex.Primary {
 					x := AlterTable{
@@ -42,6 +44,18 @@ func Changes(database next.UpdateDatabase) []Change {
 					}
 					xs = append(xs, x)
 				}
+			}
+
+			// Drop old columns.
+			for _, dropColumn := range alterTable.DropColumns {
+				x := AlterTable{
+					SchemaName: updateSchema.SchemaName,
+					TableName:  alterTable.TableName,
+					Change: DropColumn{
+						ColumnName: dropColumn.ColumnName,
+					},
+				}
+				xs = append(xs, x)
 			}
 		}
 	}
