@@ -176,6 +176,30 @@ func TestAlterTables(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			`drop old indexes`,
+			[]ab.TableMatch{
+				ab.TableMatch{
+					A: &db.Table{},
+					B: &db.Table{},
+					IndexMatches: []ab.IndexMatch{
+						ab.IndexMatch{
+							B: &db.Index{},
+						},
+					},
+				},
+			},
+			[]AlterTable{
+				AlterTable{
+					Table: &db.Table{},
+					DropIndexes: []DropIndex{
+						DropIndex{
+							Index: &db.Index{},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		xs := alterTables(test.TableMatches)
