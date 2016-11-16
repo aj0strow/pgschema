@@ -8,19 +8,25 @@ import (
 func createTableSlice(schema *db.Schema, tables []plan.CreateTable) []Change {
 	var xs []Change
 	for _, table := range tables {
-		xs = append(xs, CreateTable{
+		xs = append(xs, createTableStruct(schema, table)...)
+	}
+	return xs
+}
+
+func createTableStruct(schema *db.Schema, table plan.CreateTable) []Change {
+	var xs []Change
+	xs = append(xs, CreateTable{
+		SchemaName: schema.SchemaName,
+		TableName:  table.TableName,
+	})
+	for _, change := range addColumnSlice(table.AddColumns) {
+		xs = append(xs, AlterTable{
 			SchemaName: schema.SchemaName,
 			TableName:  table.TableName,
+			Change:     change,
 		})
-		for _, change := range addColumnSlice(table.AddColumns) {
-			xs = append(xs, AlterTable{
-				SchemaName: schema.SchemaName,
-				TableName:  table.TableName,
-				Change:     change,
-			})
-		}
-		xs = append(xs, createIndexSlice(schema, table.Table, table.CreateIndexes)...)
 	}
+	xs = append(xs, createIndexSlice(schema, table.Table, table.CreateIndexes)...)
 	return xs
 }
 

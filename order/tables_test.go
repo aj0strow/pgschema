@@ -8,6 +8,56 @@ import (
 	"github.com/aj0strow/pgschema/plan"
 )
 
+func TestCreateTableStruct(t *testing.T) {
+	tests := []struct {
+		Name        string
+		Schema      *db.Schema
+		CreateTable plan.CreateTable
+		Changes     []Change
+	}{
+		{
+			`create table change`,
+			&db.Schema{"public"},
+			plan.CreateTable{
+				Table: &db.Table{"users"},
+			},
+			[]Change{
+				CreateTable{"public", "users"},
+			},
+		},
+		{
+			`create table, then add columns, then create indexes`,
+			&db.Schema{},
+			plan.CreateTable{
+				Table: &db.Table{},
+				AddColumns: []plan.AddColumn{
+					plan.AddColumn{
+						&db.Column{},
+					},
+				},
+				CreateIndexes: []plan.CreateIndex{
+					plan.CreateIndex{
+						&db.Index{},
+					},
+				},
+			},
+			[]Change{
+				CreateTable{},
+				AlterTable{
+					Change: AddColumn{},
+				},
+				CreateIndex{},
+			},
+		},
+	}
+	for _, test := range tests {
+		xs := createTableStruct(test.Schema, test.CreateTable)
+		if !reflect.DeepEqual(xs, test.Changes) {
+			t.Errorf("createTableStruct => %s", test.Name)
+		}
+	}
+}
+
 func TestAlterTableStruct(t *testing.T) {
 	tests := []struct {
 		Name       string
