@@ -21,7 +21,7 @@ func (tx *SimpleTx) Exec(query string) error {
 }
 
 func Run(args []string) int {
-	c := cli.NewCLI("pgschema", "0.0")
+	c := cli.NewCLI("pgschema", Version)
 	c.Args = args
 	c.Commands = Commands()
 	exitCode, err := c.Run()
