@@ -114,7 +114,7 @@ Options:
   
   -uri=<uri>              Postgres database connection uri, eg. 'postgres://'.
   
-  -dsn=<dsn>              Postgres databaes connection dsn, eg. 'dbname='.
+  -dsn=<dsn>              Postgres database connection dsn, eg. 'dbname='.
 `
 	return strings.TrimSpace(help)
 }
