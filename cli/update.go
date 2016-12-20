@@ -45,6 +45,10 @@ func (cmd *Update) Run(args []string) int {
 		cmd.Error(err.Error())
 		return 1
 	}
+	if err := a.Err(); err != nil {
+		cmd.Error(err.Error())
+		return 1
+	}
 	var (
 		pgConfig *pgx.ConnConfig
 	)

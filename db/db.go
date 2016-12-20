@@ -12,14 +12,6 @@ type Table struct {
 	TableName string
 }
 
-type Column struct {
-	ColumnName    string
-	DataType      string
-	CastTypeUsing string
-	NotNull       bool
-	Default       string
-}
-
 type Index struct {
 	TableName string
 	IndexName string
