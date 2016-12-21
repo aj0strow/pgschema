@@ -8,10 +8,12 @@ func addColumnSlice(columns []plan.AddColumn) []Change {
 	var xs []Change
 	for _, column := range columns {
 		xs = append(xs, AddColumn{
-			ColumnName: column.ColumnName,
-			DataType:   column.DataType,
-			NotNull:    column.NotNull,
-			Default:    column.Default,
+			ColumnName:       column.ColumnName,
+			DataType:         column.DataType,
+			NumericPrecision: column.NumericPrecision,
+			NumericScale:     column.NumericScale,
+			NotNull:          column.NotNull,
+			Default:          column.Default,
 		})
 	}
 	return xs
@@ -40,8 +42,10 @@ func alterColumnStruct(column plan.AlterColumn) []Change {
 	}
 	if column.SetDataType {
 		xs = append(xs, SetDataType{
-			DataType: column.DataType,
-			Using:    column.CastTypeUsing,
+			DataType:         column.DataType,
+			NumericPrecision: column.NumericPrecision,
+			NumericScale:     column.NumericScale,
+			Using:            column.CastTypeUsing,
 		})
 	}
 	if column.SetDefault {

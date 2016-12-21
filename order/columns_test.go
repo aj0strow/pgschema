@@ -37,6 +37,25 @@ func TestAddColumnSlice(t *testing.T) {
 			},
 		},
 		{
+			`include numeric precision and scale`,
+			[]plan.AddColumn{
+				plan.AddColumn{
+					&db.Column{
+						DataType:         "numeric",
+						NumericPrecision: 8,
+						NumericScale:     2,
+					},
+				},
+			},
+			[]Change{
+				AddColumn{
+					DataType:         "numeric",
+					NumericPrecision: 8,
+					NumericScale:     2,
+				},
+			},
+		},
+		{
 			`ignore cast expression`,
 			[]plan.AddColumn{
 				plan.AddColumn{
@@ -190,6 +209,24 @@ func TestAlterColumnStruct(t *testing.T) {
 			[]Change{
 				SetDataType{
 					DataType: "money",
+				},
+			},
+		},
+		{
+			`set data type with numeric precision and scale`,
+			plan.AlterColumn{
+				Column: &db.Column{
+					DataType:         "numeric",
+					NumericPrecision: 8,
+					NumericScale:     2,
+				},
+				SetDataType: true,
+			},
+			[]Change{
+				SetDataType{
+					DataType:         "numeric",
+					NumericPrecision: 8,
+					NumericScale:     2,
 				},
 			},
 		},
