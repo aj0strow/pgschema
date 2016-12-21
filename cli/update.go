@@ -99,8 +99,7 @@ func (cmd *Update) Run(args []string) int {
 			return 1
 		}
 	}
-	err = tx.Commit()
-	if err != nil {
+	if err := tx.Commit(); err != nil {
 		cmd.Error(err.Error())
 		return 1
 	}
