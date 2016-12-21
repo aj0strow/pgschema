@@ -55,6 +55,20 @@ func TestConvertColumn(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"amount",
+			Column{
+				Type: "numeric(11,2)",
+			},
+			db.ColumnNode{
+				Column: db.Column{
+					ColumnName:       "amount",
+					DataType:         "numeric",
+					NumericPrecision: 11,
+					NumericScale:     2,
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		node := convertColumn(test.Key, test.Value)

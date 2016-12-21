@@ -3,6 +3,8 @@ package hcl
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 
 	"github.com/aj0strow/pgschema/db"
 	"github.com/hashicorp/hcl"
@@ -110,15 +112,32 @@ func convertTable(tableName string, v Table) db.TableNode {
 	}
 }
 
+var numericRe = regexp.MustCompile(`numeric\((\d+),(\d+)\)`)
+
 func convertColumn(k string, v Column) db.ColumnNode {
+	c := db.Column{
+		ColumnName:    k,
+		DataType:      v.Type,
+		CastTypeUsing: v.CastTypeUsing,
+		NotNull:       v.NotNull || v.PrimaryKey,
+		Default:       v.Default,
+	}
+	numericMatches := numericRe.FindAllStringSubmatch(c.DataType, -1)
+	if len(numericMatches) > 0 {
+		numericPrecision, err := strconv.Atoi(numericMatches[0][1])
+		if err != nil {
+			panic(err)
+		}
+		numericScale, err := strconv.Atoi(numericMatches[0][2])
+		if err != nil {
+			panic(err)
+		}
+		c.DataType = "numeric"
+		c.NumericPrecision = numericPrecision
+		c.NumericScale = numericScale
+	}
 	return db.ColumnNode{
-		Column: db.Column{
-			ColumnName:    k,
-			DataType:      v.Type,
-			CastTypeUsing: v.CastTypeUsing,
-			NotNull:       v.NotNull || v.PrimaryKey,
-			Default:       v.Default,
-		},
+		Column: c,
 	}
 }
 

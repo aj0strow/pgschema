@@ -66,6 +66,30 @@ func TestSetDataType(t *testing.T) {
 			},
 			false,
 		},
+		Test{
+			`compare numeric precision`,
+			&db.Column{
+				DataType:         "numeric",
+				NumericPrecision: 11,
+			},
+			&db.Column{
+				DataType:         "numeric",
+				NumericPrecision: 9,
+			},
+			true,
+		},
+		Test{
+			`compare numeric scale`,
+			&db.Column{
+				DataType:     "numeric",
+				NumericScale: 3,
+			},
+			&db.Column{
+				DataType:     "numeric",
+				NumericScale: 6,
+			},
+			true,
+		},
 	}
 	for _, test := range tests {
 		if setDataType(test.A, test.B) != test.SetDataType {
