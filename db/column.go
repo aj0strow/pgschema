@@ -21,3 +21,11 @@ func (c *Column) Err() error {
 	}
 	return nil
 }
+
+type ColumnNode struct {
+	Column Column
+}
+
+func (cn *ColumnNode) Err() error {
+	return cn.Column.Err()
+}

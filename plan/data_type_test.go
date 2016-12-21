@@ -36,6 +36,18 @@ func TestSetDataType(t *testing.T) {
 			},
 			true,
 		},
+		Test{
+			`change numeric to double`,
+			&db.Column{
+				ColumnName: "balance",
+				DataType:   "numeric",
+			},
+			&db.Column{
+				ColumnName: "balance",
+				DataType:   "double precision",
+			},
+			true,
+		},
 	}
 	for _, test := range tests {
 		if setDataType(test.A, test.B) != test.SetDataType {

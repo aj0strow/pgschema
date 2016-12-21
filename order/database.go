@@ -7,7 +7,9 @@ import (
 )
 
 func Changes(a, b db.DatabaseNode) []Change {
-	return updateDatabase(plan.Update(ab.MatchDatabase(a, b)))
+	matched := ab.MatchDatabase(a, b)
+	planned := plan.Update(matched)
+	return updateDatabase(planned)
 }
 
 func updateDatabase(database plan.UpdateDatabase) []Change {

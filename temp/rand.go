@@ -10,6 +10,7 @@ func init() {
 	rand.Seed(100)
 }
 
+// randSchemaName generates a 10-character lowercase schema name.
 func randSchemaName() string {
 	b := make([]byte, 10)
 	for i := range b {

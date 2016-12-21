@@ -124,3 +124,38 @@ func TestAlterColumns(t *testing.T) {
 		}
 	}
 }
+
+func TestAlterColumnData(t *testing.T) {
+	tests := []struct {
+		Name        string
+		ColumnMatch ab.ColumnMatch
+		AlterColumn AlterColumn
+	}{
+		{
+			`numeric to float`,
+			ab.ColumnMatch{
+				A: &db.Column{
+					ColumnName: "balance",
+					DataType:   "double precision",
+				},
+				B: &db.Column{
+					ColumnName: "balance",
+					DataType:   "numeric",
+				},
+			},
+			AlterColumn{
+				Column: &db.Column{
+					ColumnName: "balance",
+					DataType:   "double precision",
+				},
+				SetDataType: true,
+			},
+		},
+	}
+	for _, tt := range tests {
+		change := alterColumn(tt.ColumnMatch.A, tt.ColumnMatch.B)
+		if !reflect.DeepEqual(tt.AlterColumn, change) {
+			t.Errorf("alterColumn => %s", tt.Name)
+		}
+	}
+}

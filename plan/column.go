@@ -62,6 +62,7 @@ func alterColumns(columns []ab.ColumnMatch) []AlterColumn {
 func alterColumn(a, b *db.Column) AlterColumn {
 	return AlterColumn{
 		Column:      a,
+		SetDataType: setDataType(a, b),
 		SetNotNull:  setNotNull(a, b),
 		DropNotNull: dropNotNull(a, b),
 		SetDefault:  setDefault(a, b),

@@ -13,6 +13,9 @@ type Conn struct {
 	SchemaName string
 }
 
+// Connect establishes a new pg connection to the provided database name, creates
+// a new random schema and sets the search path to that schema. When you close
+// the connection, the schema is dropped, making the schema ephemeral.
 func Connect(database string) (*Conn, error) {
 	config := pgx.ConnConfig{
 		Host:     "localhost",
@@ -50,6 +53,7 @@ func Connect(database string) (*Conn, error) {
 	return tmp, nil
 }
 
+// Close drops the associated schema and then closes the connection.
 func (tmp *Conn) Close() error {
 	_, err := tmp.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE`, tmp.SchemaName))
 	if err != nil {
