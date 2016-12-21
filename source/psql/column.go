@@ -27,7 +27,10 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 			column_name,
 			data_type,
 			is_nullable,
-			column_default
+			column_default,
+			numeric_precision,
+			numeric_scale,
+			numeric_precision_radix
 		FROM information_schema.columns
 		WHERE table_schema = '%s'
 		AND table_name = '%s'
@@ -41,16 +44,30 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	for rows.Next() {
 		column := db.Column{}
 		var (
-			isNullable string
-			colDefault pgx.NullString
+			isNullable       string
+			colDefault       pgx.NullString
+			numericPrecision pgx.NullInt32
+			numericScale     pgx.NullInt32
+			numericRadix     pgx.NullInt32
 		)
-
-		err := rows.Scan(&column.ColumnName, &column.DataType, &isNullable, &colDefault)
+		err := rows.Scan(
+			&column.ColumnName,
+			&column.DataType,
+			&isNullable,
+			&colDefault,
+			&numericPrecision,
+			&numericScale,
+			&numericRadix,
+		)
 		if err != nil {
 			return nil, err
 		}
 		column.NotNull = isNullable == "NO"
 		column.Default = colDefault.String
+		if numericRadix.Valid {
+			column.NumericPrecision = int(numericPrecision.Int32)
+			column.NumericScale = int(numericScale.Int32)
+		}
 		columns = append(columns, column)
 	}
 	if err := rows.Err(); err != nil {

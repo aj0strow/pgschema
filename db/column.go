@@ -5,11 +5,13 @@ import (
 )
 
 type Column struct {
-	ColumnName    string
-	DataType      string
-	CastTypeUsing string
-	NotNull       bool
-	Default       string
+	ColumnName       string
+	DataType         string
+	CastTypeUsing    string
+	NotNull          bool
+	Default          string
+	NumericPrecision int
+	NumericScale     int
 }
 
 func (c *Column) Err() error {

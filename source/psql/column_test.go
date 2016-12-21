@@ -39,6 +39,16 @@ func TestLoadColumn(t *testing.T) {
 				Default:    `'nobody'::text`,
 			},
 		},
+		Test{
+			`balance numeric(11,2) DEFAULT 0`,
+			db.Column{
+				ColumnName:       "balance",
+				DataType:         "numeric",
+				Default:          "0",
+				NumericPrecision: 11,
+				NumericScale:     2,
+			},
+		},
 	}
 	for _, test := range tests {
 		runLoadColumn(t, test.Query, test.Column)
