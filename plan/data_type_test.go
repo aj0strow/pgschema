@@ -39,14 +39,32 @@ func TestSetDataType(t *testing.T) {
 		Test{
 			`change numeric to double`,
 			&db.Column{
-				ColumnName: "balance",
-				DataType:   "numeric",
+				DataType: "numeric",
 			},
 			&db.Column{
-				ColumnName: "balance",
-				DataType:   "double precision",
+				DataType: "double precision",
 			},
 			true,
+		},
+		Test{
+			`ignore timestamp alias`,
+			&db.Column{
+				DataType: "timestamp",
+			},
+			&db.Column{
+				DataType: "timestamp without time zone",
+			},
+			false,
+		},
+		Test{
+			`ignore timestamptz alias`,
+			&db.Column{
+				DataType: "timestamptz",
+			},
+			&db.Column{
+				DataType: "timestamp with time zone",
+			},
+			false,
 		},
 	}
 	for _, test := range tests {

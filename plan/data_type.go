@@ -5,5 +5,17 @@ import (
 )
 
 func setDataType(a, b *db.Column) bool {
-	return a.DataType != b.DataType
+	return getCanonicalType(a.DataType) != getCanonicalType(b.DataType)
+}
+
+var typeMap = map[string]string{
+	"timestamp":   "timestamp without time zone",
+	"timestamptz": "timestamp with time zone",
+}
+
+func getCanonicalType(dt string) string {
+	if ct, ok := typeMap[dt]; ok {
+		return ct
+	}
+	return dt
 }

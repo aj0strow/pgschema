@@ -24,28 +24,39 @@ func TestNumericDouble(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := []order.Change{
+	negate := []order.Change{
 		order.AlterTable{
 			SchemaName: conn.SchemaName,
-			TableName:  "accounts",
+			TableName:  "users",
 			Change: order.AlterColumn{
-				ColumnName: "balance",
+				ColumnName: "created_at",
 				Change: order.SetDataType{
-					DataType: "double precision",
+					DataType: "timestamp",
+				},
+			},
+		},
+		order.AlterTable{
+			SchemaName: conn.SchemaName,
+			TableName:  "customers",
+			Change: order.AlterColumn{
+				ColumnName: "created_at",
+				Change: order.SetDataType{
+					DataType: "timestamptz",
 				},
 			},
 		},
 	}
 
-	for _, wc := range want {
+	for _, nc := range negate {
 		found := false
 		for _, hc := range have {
-			if wc.String() == hc.String() {
+			if nc.String() == hc.String() {
 				found = true
 			}
 		}
-		if !found {
-			t.Errorf(wc.String())
+		if found {
+			t.Errorf("invalid change")
+			t.Errorf(nc.String())
 		}
 	}
 }
