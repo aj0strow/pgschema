@@ -30,7 +30,8 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 			column_default,
 			numeric_precision,
 			numeric_scale,
-			numeric_precision_radix
+			numeric_precision_radix,
+			udt_name
 		FROM information_schema.columns
 		WHERE table_schema = '%s'
 		AND table_name = '%s'
@@ -49,6 +50,7 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 			numericPrecision pgx.NullInt32
 			numericScale     pgx.NullInt32
 			numericRadix     pgx.NullInt32
+			udtName          string
 		)
 		err := rows.Scan(
 			&column.ColumnName,
@@ -58,9 +60,13 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 			&numericPrecision,
 			&numericScale,
 			&numericRadix,
+			&udtName,
 		)
 		if err != nil {
 			return nil, err
+		}
+		if column.DataType == "USER-DEFINED" {
+			column.DataType = udtName
 		}
 		column.NotNull = isNullable == "NO"
 		column.Default = colDefault.String

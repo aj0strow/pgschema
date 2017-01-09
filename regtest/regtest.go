@@ -20,7 +20,8 @@ func (r *RegressionTest) Run() ([]order.Change, error) {
 	if err != nil {
 		return nil, err
 	}
-	if _, err := r.Conn.Exec(string(f1)); err != nil {
+	setup := bytes.Replace(f1, []byte("_schema_"), []byte(r.Conn.SchemaName), 1)
+	if _, err := r.Conn.Exec(string(setup)); err != nil {
 		return nil, err
 	}
 	f2, err := ioutil.ReadFile(r.SourceFile)
