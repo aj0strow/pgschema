@@ -5,9 +5,13 @@ import (
 )
 
 func setDefault(a, b *db.Column) bool {
-	return a.Default != b.Default && a.Default != ""
+	return !defaultEqual(a, b) && a.Default != ""
 }
 
 func dropDefault(a, b *db.Column) bool {
-	return a.Default != b.Default && b.Default != ""
+	return !defaultEqual(a, b) && b.Default != ""
+}
+
+func defaultEqual(a, b *db.Column) bool {
+	return a.Default == b.Default || a.Default+"::"+a.DataType == b.Default
 }

@@ -46,6 +46,18 @@ func TestSetDefault(t *testing.T) {
 			&db.Column{},
 			true,
 		},
+		Test{
+			`ignore type casting`,
+			&db.Column{
+				DataType: "text",
+				Default:  `''`,
+			},
+			&db.Column{
+				DataType: "text",
+				Default:  `''::text`,
+			},
+			false,
+		},
 	}
 	for _, test := range tests {
 		if setDefault(test.A, test.B) != test.SetDefault {
@@ -92,6 +104,18 @@ func TestDropDefault(t *testing.T) {
 				Default: "now()",
 			},
 			&db.Column{},
+			false,
+		},
+		Test{
+			`ignore type casting`,
+			&db.Column{
+				DataType: "text",
+				Default:  `''`,
+			},
+			&db.Column{
+				DataType: "text",
+				Default:  `''::text`,
+			},
 			false,
 		},
 	}
