@@ -49,6 +49,14 @@ func TestLoadColumn(t *testing.T) {
 				NumericScale:     2,
 			},
 		},
+		Test{
+			`upper4 integer[4]`,
+			db.Column{
+				ColumnName: "upper4",
+				DataType:   "integer",
+				Array:      true,
+			},
+		},
 	}
 	for _, test := range tests {
 		runLoadColumn(t, test.Query, test.Column)

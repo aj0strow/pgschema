@@ -12,6 +12,7 @@ type Column struct {
 	Default          string
 	NumericPrecision int
 	NumericScale     int
+	Array            bool
 }
 
 func (c *Column) Err() error {
