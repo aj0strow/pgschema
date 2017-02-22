@@ -113,6 +113,7 @@ func convertTable(tableName string, v Table) db.TableNode {
 }
 
 var numericRe = regexp.MustCompile(`numeric\((\d+),(\d+)\)`)
+var arrayRe = regexp.MustCompile(`^(.+)(?:\[\d*\])+$`)
 
 func convertColumn(k string, v Column) db.ColumnNode {
 	c := db.Column{
@@ -135,6 +136,11 @@ func convertColumn(k string, v Column) db.ColumnNode {
 		c.DataType = "numeric"
 		c.NumericPrecision = numericPrecision
 		c.NumericScale = numericScale
+	}
+	arrayMatches := arrayRe.FindAllStringSubmatch(c.DataType, -1)
+	if len(arrayMatches) > 0 {
+		c.DataType = arrayMatches[0][1]
+		c.Array = true
 	}
 	return db.ColumnNode{
 		Column: c,

@@ -69,6 +69,19 @@ func TestConvertColumn(t *testing.T) {
 				},
 			},
 		},
+		Test{
+			"upper4",
+			Column{
+				Type: "integer[4]",
+			},
+			db.ColumnNode{
+				Column: db.Column{
+					ColumnName: "upper4",
+					DataType:   "integer",
+					Array:      true,
+				},
+			},
+		},
 	}
 	for _, test := range tests {
 		node := convertColumn(test.Key, test.Value)
