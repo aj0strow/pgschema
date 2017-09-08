@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aj0strow/pgschema/db"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/pgtype"
 )
 
 func LoadColumnNodes(conn Conn, schema db.Schema, table db.Table) ([]db.ColumnNode, error) {
@@ -51,10 +51,10 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 		column := db.Column{}
 		var (
 			isNullable       string
-			colDefault       pgx.NullString
-			numericPrecision pgx.NullInt32
-			numericScale     pgx.NullInt32
-			numericRadix     pgx.NullInt32
+			colDefault       pgtype.Text
+			numericPrecision pgtype.Int4
+			numericScale     pgtype.Int4
+			numericRadix     pgtype.Int4
 			udtName          string
 			elementTypeId    string
 		)
@@ -74,9 +74,9 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 		}
 		column.NotNull = isNullable == "NO"
 		column.Default = colDefault.String
-		if numericRadix.Valid {
-			column.NumericPrecision = int(numericPrecision.Int32)
-			column.NumericScale = int(numericScale.Int32)
+		if numericRadix.Status == pgtype.Present {
+			column.NumericPrecision = int(numericPrecision.Int)
+			column.NumericScale = int(numericScale.Int)
 		}
 		if column.DataType == "USER-DEFINED" {
 			column.DataType = udtName
@@ -135,9 +135,9 @@ func LoadElementTypes(conn Conn, schemaName, tableName string) ([]ElementType, e
 	for rows.Next() {
 		elementType := ElementType{}
 		var (
-			numericPrecision pgx.NullInt32
-			numericScale     pgx.NullInt32
-			numericRadix     pgx.NullInt32
+			numericPrecision pgtype.Int4
+			numericScale     pgtype.Int4
+			numericRadix     pgtype.Int4
 			udtName          string
 		)
 		err := rows.Scan(
@@ -154,9 +154,9 @@ func LoadElementTypes(conn Conn, schemaName, tableName string) ([]ElementType, e
 		if elementType.DataType == "USER-DEFINED" {
 			elementType.DataType = udtName
 		}
-		if numericRadix.Valid {
-			elementType.NumericPrecision = int(numericPrecision.Int32)
-			elementType.NumericScale = int(numericScale.Int32)
+		if numericRadix.Status == pgtype.Present {
+			elementType.NumericPrecision = int(numericPrecision.Int)
+			elementType.NumericScale = int(numericScale.Int)
 		}
 		elementTypes = append(elementTypes, elementType)
 	}
