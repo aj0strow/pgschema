@@ -1,8 +1,7 @@
 
-test: fmt
+test:
+	-dropdb pgschema
+	createdb pgschema -E UTF8
 	go test ./...
 
-fmt:
-	go fmt ./...
-
-.PHONY: test fmt
+.PHONY: test

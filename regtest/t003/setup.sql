@@ -1,4 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "citext";
 
 CREATE TABLE users (
-  user_name public.citext not null
+  user_name citext not null
 );

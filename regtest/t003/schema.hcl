@@ -1,4 +1,3 @@
-
 schema "_schema_" {
   table "users" {
     column "user_name" {
