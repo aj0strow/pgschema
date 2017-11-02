@@ -1,3 +1,4 @@
+pkg = github.com/aj0strow/pgschema
 
 test:
 	-dropdb pgschema
@@ -5,3 +6,8 @@ test:
 	go test ./...
 
 .PHONY: test
+
+build:
+	sh ./build.sh
+	
+.PHONY: build
