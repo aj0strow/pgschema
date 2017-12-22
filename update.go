@@ -1,4 +1,4 @@
-package cli
+package main
 
 import (
 	"flag"
@@ -6,16 +6,16 @@ import (
 	"github.com/aj0strow/pgschema/source/hcl"
 	"github.com/aj0strow/pgschema/source/psql"
 	"github.com/jackc/pgx"
+	"github.com/mitchellh/cli"
 	"io/ioutil"
-	"strings"
 )
 
 type Update struct {
-	Term
+	cli.Ui
 }
 
 func (cmd *Update) Synopsis() string {
-	return `Update database schema to match source file`
+	return "Update database schema to match source file."
 }
 
 func (cmd *Update) Run(args []string) int {
@@ -29,34 +29,33 @@ func (cmd *Update) Run(args []string) int {
 	f.StringVar(&uri, "uri", "", "")
 	f.StringVar(&dsn, "dsn", "", "")
 	if err := f.Parse(args); err != nil {
-		return 1
+		cmd.Error(err.Error())
+		return BadInput
 	}
 	if source == "" {
 		cmd.Error("-source input file can't be empty")
-		return 1
+		return BadInput
 	}
 	data, err := ioutil.ReadFile(source)
 	if err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return BadInput
 	}
 	a, err := hcl.ParseBytes(data)
 	if err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return BadInput
 	}
 	if err := a.Err(); err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return BadInput
 	}
-	var (
-		pgConfig *pgx.ConnConfig
-	)
+	var pgConfig *pgx.ConnConfig
 	if dsn != "" {
 		config, err := pgx.ParseDSN(dsn)
 		if err != nil {
 			cmd.Error(err.Error())
-			return 1
+			return BadInput
 		}
 		pgConfig = &config
 	}
@@ -64,60 +63,57 @@ func (cmd *Update) Run(args []string) int {
 		config, err := pgx.ParseURI(uri)
 		if err != nil {
 			cmd.Error(err.Error())
-			return 1
+			return BadInput
 		}
 		pgConfig = &config
 	}
 	if pgConfig == nil {
 		cmd.Error("database connection required, provide -dsn or -uri")
-		return 1
+		return BadInput
 	}
 	conn, err := pgx.Connect(*pgConfig)
 	if err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return DatabaseError
 	}
 	defer conn.Close()
 	b, err := psql.LoadDatabaseNode(conn)
 	if err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return DatabaseError
 	}
 	tx, err := conn.Begin()
 	if err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return DatabaseError
 	}
 	defer tx.Rollback()
-
 	changes := order.Changes(a, b)
 	for _, change := range changes {
 		cmd.Info(change.String())
 		_, err := tx.Exec(change.String())
 		if err != nil {
 			cmd.Error(err.Error())
-			return 1
+			return DatabaseError
 		}
 	}
 	if err := tx.Commit(); err != nil {
 		cmd.Error(err.Error())
-		return 1
+		return DatabaseError
 	}
-	return 0
+	return Success
 }
 
 func (cmd *Update) Help() string {
-	help := `
-Usage: pgschema update [options]
- Update database schema to match source file. 
+	return `
+ => Update database schema to match source file. 
+
+pgschema update [flags]
  
-Options:
- 
-  -source=<path>          The source file in hcl schema format.
+  -source <path>          Path to source file in HCL schema format.
   
-  -uri=<uri>              Postgres database connection uri, eg. 'postgres://'.
+  -uri <uri>              Postgres database connection uri, eg. 'postgres://'.
   
-  -dsn=<dsn>              Postgres database connection dsn, eg. 'dbname='.
+  -dsn <dsn>              Postgres database connection dsn, eg. 'dbname='.
 `
-	return strings.TrimSpace(help)
 }
