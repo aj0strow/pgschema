@@ -70,6 +70,20 @@ func TestConvertColumn(t *testing.T) {
 			},
 		},
 		Test{
+			"tick_size",
+			Column{
+				Type: "numeric(24, 16)",
+			},
+			db.ColumnNode{
+				Column: db.Column{
+					ColumnName:       "tick_size",
+					DataType:         "numeric",
+					NumericPrecision: 24,
+					NumericScale:     16,
+				},
+			},
+		},
+		Test{
 			"upper4",
 			Column{
 				Type: "integer[4]",
