@@ -18,16 +18,34 @@ func (cmd *Update) Synopsis() string {
 	return "Update database schema to match source file."
 }
 
+func (cmd *Update) Help() string {
+	return `
+ => Update database schema to match source file. 
+
+pgschema update [flags]
+ 
+  -source <path>          Path to source file in HCL schema format.
+  
+  -uri <uri>              Postgres database connection uri, eg. 'postgres://'.
+  
+  -dsn <dsn>              Postgres database connection dsn, eg. 'dbname='.
+  
+  -dryRun                 Print SQL update commands without executing.
+`
+}
+
 func (cmd *Update) Run(args []string) int {
 	var (
 		source string
 		uri    string
 		dsn    string
+		dryRun bool
 	)
 	f := flag.NewFlagSet("update", flag.ContinueOnError)
 	f.StringVar(&source, "source", "", "")
 	f.StringVar(&uri, "uri", "", "")
 	f.StringVar(&dsn, "dsn", "", "")
+	f.BoolVar(&dryRun, "dryRun", false, "")
 	if err := f.Parse(args); err != nil {
 		cmd.Error(err.Error())
 		return BadInput
@@ -82,13 +100,19 @@ func (cmd *Update) Run(args []string) int {
 		cmd.Error(err.Error())
 		return DatabaseError
 	}
+	changes := order.Changes(a, b)
+	if dryRun {
+		for _, change := range changes {
+			cmd.Info(change.String())
+		}
+		return Success
+	}
 	tx, err := conn.Begin()
 	if err != nil {
 		cmd.Error(err.Error())
 		return DatabaseError
 	}
 	defer tx.Rollback()
-	changes := order.Changes(a, b)
 	for _, change := range changes {
 		cmd.Info(change.String())
 		_, err := tx.Exec(change.String())
@@ -102,18 +126,4 @@ func (cmd *Update) Run(args []string) int {
 		return DatabaseError
 	}
 	return Success
-}
-
-func (cmd *Update) Help() string {
-	return `
- => Update database schema to match source file. 
-
-pgschema update [flags]
- 
-  -source <path>          Path to source file in HCL schema format.
-  
-  -uri <uri>              Postgres database connection uri, eg. 'postgres://'.
-  
-  -dsn <dsn>              Postgres database connection dsn, eg. 'dbname='.
-`
 }
