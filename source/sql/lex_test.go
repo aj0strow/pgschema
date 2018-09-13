@@ -59,6 +59,32 @@ func TestLex(t *testing.T) {
 				{itemEOF, ""},
 			},
 		},
+		{
+			`'hello world'`,
+			[]item{
+				{itemString, "hello world"},
+				{itemEOF, ""},
+			},
+		},
+		{
+			"+",
+			[]item{
+				{itemOperator, "+"},
+				{itemEOF, ""},
+			},
+		},
+		{
+			"42 3.5 4. .001 5e2 1.925e-3",
+			[]item{
+				{itemNumber, "42"},
+				{itemNumber, "3.5"},
+				{itemNumber, "4."},
+				{itemNumber, ".001"},
+				{itemNumber, "5e2"},
+				{itemNumber, "1.925e-3"},
+				{itemEOF, ""},
+			},
+		},
 	}
 	for _, tc := range tt {
 		var items []item

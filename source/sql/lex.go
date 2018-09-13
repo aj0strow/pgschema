@@ -14,6 +14,9 @@ const (
 	itemEOF
 	itemToken
 	itemSpecial
+	itemString
+	itemOperator
+	itemNumber
 )
 
 const eof = -1
@@ -121,9 +124,22 @@ func lexSQL(l *lexer) stateFn {
 	if nextString(l, "/*") {
 		return lexCommentBlock
 	}
-	if nextRune(l, ';', '(', ')', '[', ']', ',', '*') {
+	if r := l.next(); unicode.IsDigit(r) || r == '.' && unicode.IsDigit(l.peek()) {
+		l.backup()
+		return lexNumber
+	} else {
+		l.backup()
+	}
+	if nextRune(l, ';', '(', ')', '[', ']', ',', '*', '.') {
 		l.emit(itemSpecial)
 		return lexSQL
+	}
+	if nextRune(l, '+', '-', '*', '/', '<', '>', '=', '~', '!', '@', '#', '%', '^', '&', '|', '`') {
+		l.emit(itemOperator)
+		return lexSQL
+	}
+	if l.peek() == 39 {
+		return lexString
 	}
 	if r := l.peek(); unicode.IsLetter(r) || r == '_' {
 		return lexToken
@@ -140,8 +156,7 @@ func lexSpace(l *lexer) {
 
 func lexComment(l *lexer) stateFn {
 	for {
-		r := l.next()
-		if r == '\n' || r == '\r' || r == eof {
+		if r := l.next(); r == '\n' || r == '\r' || r == eof {
 			break
 		}
 	}
@@ -152,25 +167,66 @@ func lexComment(l *lexer) stateFn {
 
 func lexCommentBlock(l *lexer) stateFn {
 	n := 1
-	for l.next() != eof {
+	for {
 		if nextString(l, "/*") {
 			n += 1
 		} else if nextString(l, "*/") {
 			n -= 1
-		} else if n == 0 {
+		}
+		if n == 0 {
 			break
 		}
+		if l.next() == eof {
+			return nil
+		}
 	}
-	l.backup()
 	l.ignore()
 	return lexSQL
 }
 
 func lexToken(l *lexer) stateFn {
-	for r := l.next(); unicode.IsLetter(r) || r == '_' || unicode.IsDigit(r); r = l.next() {
-		// continue
+	for r := l.peek(); unicode.IsLetter(r) || r == '_' || unicode.IsDigit(r); r = l.peek() {
+		l.next()
+	}
+	l.emit(itemToken)
+	return lexSQL
+}
+
+func lexString(l *lexer) stateFn {
+	if l.next() != 39 {
+		panic("string should start with single quote")
+	}
+	l.ignore()
+	for {
+		if l.peek() == eof {
+			return nil
+		}
+		if l.next() == 39 {
+			break
+		}
 	}
 	l.backup()
-	l.emit(itemToken)
+	l.emit(itemString)
+	l.next()
+	l.ignore()
+	return lexSQL
+}
+
+func lexNumber(l *lexer) stateFn {
+	for unicode.IsDigit(l.peek()) {
+		l.next()
+	}
+	if nextRune(l, '.') {
+		for unicode.IsDigit(l.peek()) {
+			l.next()
+		}
+	}
+	if nextRune(l, 'e') {
+		nextRune(l, '+', '-')
+		for unicode.IsDigit(l.peek()) {
+			l.next()
+		}
+	}
+	l.emit(itemNumber)
 	return lexSQL
 }
