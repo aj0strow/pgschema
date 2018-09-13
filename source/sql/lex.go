@@ -103,13 +103,13 @@ func nextKeyword(l *lexer, s string) bool {
 
 type stateFn func(*lexer) stateFn
 
-func lex(input string) *lexer {
+func lex(input string) chan item {
 	l := &lexer{
 		input: input,
 		items: make(chan item),
 	}
 	go l.run(lexSQL)
-	return l
+	return l.items
 }
 
 func lexSQL(l *lexer) stateFn {

@@ -88,8 +88,7 @@ func TestLex(t *testing.T) {
 	}
 	for _, tc := range tt {
 		var items []item
-		l := lex(tc.input)
-		for item := range l.items {
+		for item := range lex(tc.input) {
 			items = append(items, item)
 		}
 		if !reflect.DeepEqual(items, tc.items) {
