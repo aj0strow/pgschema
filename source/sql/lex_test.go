@@ -11,45 +11,45 @@ func TestLex(t *testing.T) {
 		items []item
 	}{
 		{
-			"",
+			``,
 			[]item{
 				{itemEOF, ""},
 			},
 		},
 		{
-			"-- user table",
+			`-- user table`,
 			[]item{
 				{itemEOF, ""},
 			},
 		},
 		{
-			"/* user table */",
+			`/* user table */`,
 			[]item{
 				{itemEOF, ""},
 			},
 		},
 		{
-			"/* nested /* comments */ */",
+			`/* nested /* comments */ */`,
 			[]item{
 				{itemEOF, ""},
 			},
 		},
 		{
-			";",
+			`;`,
 			[]item{
 				{itemSpecial, ";"},
 				{itemEOF, ""},
 			},
 		},
 		{
-			"table",
+			`table`,
 			[]item{
 				{itemToken, "table"},
 				{itemEOF, ""},
 			},
 		},
 		{
-			"SELECT * FROM MY_TABLE;",
+			`SELECT * FROM MY_TABLE;`,
 			[]item{
 				{itemToken, "SELECT"},
 				{itemSpecial, "*"},
@@ -67,14 +67,14 @@ func TestLex(t *testing.T) {
 			},
 		},
 		{
-			"+",
+			`+`,
 			[]item{
 				{itemOperator, "+"},
 				{itemEOF, ""},
 			},
 		},
 		{
-			"42 3.5 4. .001 5e2 1.925e-3",
+			`42 3.5 4. .001 5e2 1.925e-3`,
 			[]item{
 				{itemNumber, "42"},
 				{itemNumber, "3.5"},
