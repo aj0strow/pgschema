@@ -30,6 +30,19 @@ func TestParse(t *testing.T) {
 				},
 			},
 		},
+		{
+			"parse schema declaration",
+			"SCHEMA default;",
+			db.DatabaseNode{
+				SchemaNodes: []db.SchemaNode{
+					db.SchemaNode{
+						Schema: db.Schema{
+							SchemaName: "default",
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, c := range cs {
 		n, err := parse(c.SQL)
