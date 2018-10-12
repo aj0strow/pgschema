@@ -227,5 +227,38 @@ func parseColumnConstraint(p *parser, tableNode *db.TableNode, columnNode *db.Co
 		tableNode.IndexNodes = append(tableNode.IndexNodes, indexNode)
 		return nil
 	}
+	if i.val == "DEFAULT" {
+		return parseColumnDefault(p, columnNode)
+	}
 	return newParseErr("unexpected column constraint")
+}
+
+func parseColumnDefault(p *parser, columnNode *db.ColumnNode) error {
+	var i item
+	i = p.Next()
+	if i.typ == itemString {
+		columnNode.Column.Default = "'" + i.val + "'"
+		return nil
+	}
+	if i.typ == itemNumber {
+		columnNode.Column.Default = i.val
+		return nil
+	}
+	if i.typ == itemToken {
+		expr := i.val
+		i = p.Next()
+		if i.typ == itemSpecial && i.val == "(" {
+			expr += i.val
+			for p.Has() {
+				i = p.Next()
+				expr += i.val
+				if i.typ == itemSpecial && i.val == ")" {
+					break
+				}
+			}
+		}
+		columnNode.Column.Default = expr
+		return nil
+	}
+	return newParseErr("expected default expression")
 }

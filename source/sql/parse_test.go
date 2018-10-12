@@ -138,6 +138,33 @@ func TestParseColumn(t *testing.T) {
 				},
 			},
 		},
+		{
+			`title text DEFAULT ''`,
+			db.Column{
+				ColumnName: "title",
+				DataType:   "text",
+				Default:    "''",
+			},
+			nil,
+		},
+		{
+			`created_at timestamptz DEFAULT now()`,
+			db.Column{
+				ColumnName: "created_at",
+				DataType:   "timestamptz",
+				Default:    "now()",
+			},
+			nil,
+		},
+		{
+			`views bigint DEFAULT 0`,
+			db.Column{
+				ColumnName: "views",
+				DataType:   "bigint",
+				Default:    "0",
+			},
+			nil,
+		},
 	}
 	for _, c := range cs {
 		p := newParser(lex(c.Fragment))
