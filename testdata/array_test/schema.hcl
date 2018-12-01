@@ -7,5 +7,8 @@ schema "_schema_" {
     column "lower4" {
       type = "integer[4]"
     }
+    column "sent5m" {
+      type = "double precision[]"
+    }
   }
 }
