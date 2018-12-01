@@ -6,21 +6,7 @@ import (
 	"github.com/aj0strow/pgschema/db"
 )
 
-func LoadIndexNodes(conn Conn, schema db.Schema, table db.Table) ([]db.IndexNode, error) {
-	indexes, err := LoadIndexes(conn, schema.SchemaName, table.TableName)
-	if err != nil {
-		return nil, err
-	}
-	indexNodes := make([]db.IndexNode, len(indexes))
-	for i := range indexes {
-		indexNodes[i] = db.IndexNode{
-			Index: indexes[i],
-		}
-	}
-	return indexNodes, nil
-}
-
-func LoadIndexes(conn Conn, schemaName, tableName string) ([]db.Index, error) {
+func LoadIndexes(conn Conn, schemaName, tableName string) ([]*db.Index, error) {
 	q := fmt.Sprintf(`
 		SELECT
 			c.relname,
@@ -35,9 +21,9 @@ func LoadIndexes(conn Conn, schemaName, tableName string) ([]db.Index, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var indexes []db.Index
+	var indexes []*db.Index
 	for rows.Next() {
-		var index db.Index
+		index := &db.Index{}
 		err := rows.Scan(&index.IndexName, &index.Unique, &index.Primary)
 		if err != nil {
 			return nil, err

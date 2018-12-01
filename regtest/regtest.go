@@ -33,14 +33,8 @@ func (r *RegressionTest) Run() ([]order.Change, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := a.Err(); err != nil {
-		return nil, err
-	}
-	b, err := psql.LoadDatabaseNode(r.Conn)
+	b, err := psql.LoadDatabase(r.Conn)
 	if err != nil {
-		return nil, err
-	}
-	if err := b.Err(); err != nil {
 		return nil, err
 	}
 	return order.Changes(a, b), nil

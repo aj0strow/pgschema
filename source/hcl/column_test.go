@@ -10,9 +10,9 @@ import (
 
 func TestConvertColumn(t *testing.T) {
 	type Test struct {
-		Key        string
-		Value      Column
-		ColumnNode db.ColumnNode
+		Key    string
+		Value  Column
+		Column *db.Column
 	}
 	tests := []Test{
 		Test{
@@ -20,11 +20,9 @@ func TestConvertColumn(t *testing.T) {
 			Column{
 				Type: "text",
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName: "name",
-					DataType:   "text",
-				},
+			&db.Column{
+				ColumnName: "name",
+				DataType:   "text",
 			},
 		},
 		Test{
@@ -33,12 +31,10 @@ func TestConvertColumn(t *testing.T) {
 				Type:    "text",
 				NotNull: true,
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName: "email",
-					DataType:   "text",
-					NotNull:    true,
-				},
+			&db.Column{
+				ColumnName: "email",
+				DataType:   "text",
+				NotNull:    true,
 			},
 		},
 		Test{
@@ -47,12 +43,10 @@ func TestConvertColumn(t *testing.T) {
 				Type:    "timestamptz",
 				Default: "now()",
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName: "created_at",
-					DataType:   "timestamptz",
-					Default:    "now()",
-				},
+			&db.Column{
+				ColumnName: "created_at",
+				DataType:   "timestamptz",
+				Default:    "now()",
 			},
 		},
 		Test{
@@ -60,13 +54,11 @@ func TestConvertColumn(t *testing.T) {
 			Column{
 				Type: "numeric(11,2)",
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName:       "amount",
-					DataType:         "numeric",
-					NumericPrecision: 11,
-					NumericScale:     2,
-				},
+			&db.Column{
+				ColumnName:       "amount",
+				DataType:         "numeric",
+				NumericPrecision: 11,
+				NumericScale:     2,
 			},
 		},
 		Test{
@@ -74,13 +66,11 @@ func TestConvertColumn(t *testing.T) {
 			Column{
 				Type: "numeric(24, 16)",
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName:       "tick_size",
-					DataType:         "numeric",
-					NumericPrecision: 24,
-					NumericScale:     16,
-				},
+			&db.Column{
+				ColumnName:       "tick_size",
+				DataType:         "numeric",
+				NumericPrecision: 24,
+				NumericScale:     16,
 			},
 		},
 		Test{
@@ -88,20 +78,18 @@ func TestConvertColumn(t *testing.T) {
 			Column{
 				Type: "integer[4]",
 			},
-			db.ColumnNode{
-				Column: db.Column{
-					ColumnName: "upper4",
-					DataType:   "integer",
-					Array:      true,
-				},
+			&db.Column{
+				ColumnName: "upper4",
+				DataType:   "integer",
+				Array:      true,
 			},
 		},
 	}
 	for _, test := range tests {
 		node := convertColumn(test.Key, test.Value)
-		if !reflect.DeepEqual(node, test.ColumnNode) {
+		if !reflect.DeepEqual(node, test.Column) {
 			t.Errorf("convertColumn failure")
-			spew.Dump(node, test.ColumnNode)
+			spew.Dump(node, test.Column)
 		}
 	}
 }

@@ -12,44 +12,41 @@ type ColumnMatch struct {
 
 // MatchColumnNodes takes separate column node lists, and combines
 // them by column name.
-func MatchColumns(a, b []db.ColumnNode) []ColumnMatch {
+func MatchColumns(a, b []*db.Column) []ColumnMatch {
 	var columnMatches []ColumnMatch
 	fromA := map[string]bool{}
-	for _, nodeA := range a {
-		colA := nodeA.Column
+	for _, colA := range a {
 		columnName := colA.ColumnName
 		fromA[columnName] = true
-		nodeB := findColumnNode(b, columnName)
-		if nodeB != nil {
-			colB := nodeB.Column
+		colB := findColumn(b, columnName)
+		if colB != nil {
 			columnMatches = append(columnMatches, ColumnMatch{
-				A: &colA,
-				B: &colB,
+				A: colA,
+				B: colB,
 			})
 		} else {
 			columnMatches = append(columnMatches, ColumnMatch{
-				A: &colA,
+				A: colA,
 				B: nil,
 			})
 		}
 	}
-	for _, nodeB := range b {
-		colB := nodeB.Column
+	for _, colB := range b {
 		columnName := colB.ColumnName
 		if !fromA[columnName] {
 			columnMatches = append(columnMatches, ColumnMatch{
 				A: nil,
-				B: &colB,
+				B: colB,
 			})
 		}
 	}
 	return columnMatches
 }
 
-func findColumnNode(nodes []db.ColumnNode, name string) *db.ColumnNode {
-	for _, node := range nodes {
-		if node.Column.ColumnName == name {
-			return &node
+func findColumn(cs []*db.Column, name string) *db.Column {
+	for _, c := range cs {
+		if c.ColumnName == name {
+			return c
 		}
 	}
 	return nil

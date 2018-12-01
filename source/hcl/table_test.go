@@ -12,16 +12,14 @@ func TestConvertTable(t *testing.T) {
 	type Test struct {
 		TableName string
 		Value     Table
-		TableNode db.TableNode
+		Table     *db.Table
 	}
 	tests := []Test{
 		Test{
 			"users",
 			Table{},
-			db.TableNode{
-				Table: db.Table{
-					TableName: "users",
-				},
+			&db.Table{
+				TableName: "users",
 			},
 		},
 		Test{
@@ -33,16 +31,12 @@ func TestConvertTable(t *testing.T) {
 					},
 				},
 			},
-			db.TableNode{
-				Table: db.Table{
-					TableName: "customers",
-				},
-				ColumnNodes: []db.ColumnNode{
-					db.ColumnNode{
-						Column: db.Column{
-							ColumnName: "email",
-							DataType:   "text",
-						},
+			&db.Table{
+				TableName: "customers",
+				Columns: []*db.Column{
+					&db.Column{
+						ColumnName: "email",
+						DataType:   "text",
 					},
 				},
 			},
@@ -57,28 +51,22 @@ func TestConvertTable(t *testing.T) {
 					},
 				},
 			},
-			db.TableNode{
-				Table: db.Table{
-					TableName: "customers",
-				},
-				ColumnNodes: []db.ColumnNode{
-					db.ColumnNode{
-						Column: db.Column{
-							ColumnName: "id",
-							DataType:   "text",
-							NotNull:    true,
-						},
+			&db.Table{
+				TableName: "customers",
+				Columns: []*db.Column{
+					&db.Column{
+						ColumnName: "id",
+						DataType:   "text",
+						NotNull:    true,
 					},
 				},
-				IndexNodes: []db.IndexNode{
-					db.IndexNode{
-						Index: db.Index{
-							TableName: "customers",
-							IndexName: "customers_pkey",
-							Exprs:     []string{"id"},
-							Unique:    true,
-							Primary:   true,
-						},
+				Indexes: []*db.Index{
+					&db.Index{
+						TableName: "customers",
+						IndexName: "customers_pkey",
+						Exprs:     []string{"id"},
+						Unique:    true,
+						Primary:   true,
 					},
 				},
 			},
@@ -88,19 +76,15 @@ func TestConvertTable(t *testing.T) {
 			Table{
 				PrimaryKey: []string{"source", "time"},
 			},
-			db.TableNode{
-				Table: db.Table{
-					TableName: "events",
-				},
-				IndexNodes: []db.IndexNode{
-					db.IndexNode{
-						Index: db.Index{
-							TableName: "events",
-							IndexName: "events_pkey",
-							Exprs:     []string{"source", "time"},
-							Unique:    true,
-							Primary:   true,
-						},
+			&db.Table{
+				TableName: "events",
+				Indexes: []*db.Index{
+					&db.Index{
+						TableName: "events",
+						IndexName: "events_pkey",
+						Exprs:     []string{"source", "time"},
+						Unique:    true,
+						Primary:   true,
 					},
 				},
 			},
@@ -108,9 +92,9 @@ func TestConvertTable(t *testing.T) {
 	}
 	for _, test := range tests {
 		node := convertTable(test.TableName, test.Value)
-		if !reflect.DeepEqual(node, test.TableNode) {
+		if !reflect.DeepEqual(node, test.Table) {
 			t.Errorf("convertTable failure")
-			spew.Dump(node, test.TableNode)
+			spew.Dump(node, test.Table)
 		}
 	}
 }

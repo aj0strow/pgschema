@@ -6,7 +6,7 @@ import (
 	"github.com/aj0strow/pgschema/plan"
 )
 
-func Changes(a, b db.DatabaseNode) []Change {
+func Changes(a, b *db.Database) []Change {
 	matched := ab.MatchDatabase(a, b)
 	planned := plan.Update(matched)
 	return updateDatabase(planned)

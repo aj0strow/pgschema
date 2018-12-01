@@ -13,19 +13,19 @@ import (
 func TestLoadColumn(t *testing.T) {
 	type Test struct {
 		Query  string
-		Column db.Column
+		Column *db.Column
 	}
 	tests := []Test{
 		Test{
 			`name text`,
-			db.Column{
+			&db.Column{
 				ColumnName: "name",
 				DataType:   "text",
 			},
 		},
 		Test{
 			`name text NOT NULL`,
-			db.Column{
+			&db.Column{
 				ColumnName: "name",
 				DataType:   "text",
 				NotNull:    true,
@@ -33,7 +33,7 @@ func TestLoadColumn(t *testing.T) {
 		},
 		Test{
 			`name text DEFAULT 'nobody'`,
-			db.Column{
+			&db.Column{
 				ColumnName: "name",
 				DataType:   "text",
 				Default:    `'nobody'::text`,
@@ -41,7 +41,7 @@ func TestLoadColumn(t *testing.T) {
 		},
 		Test{
 			`balance numeric(11,2) DEFAULT 0`,
-			db.Column{
+			&db.Column{
 				ColumnName:       "balance",
 				DataType:         "numeric",
 				Default:          "0",
@@ -51,7 +51,7 @@ func TestLoadColumn(t *testing.T) {
 		},
 		Test{
 			`upper4 integer[4]`,
-			db.Column{
+			&db.Column{
 				ColumnName: "upper4",
 				DataType:   "integer",
 				Array:      true,
@@ -63,7 +63,7 @@ func TestLoadColumn(t *testing.T) {
 	}
 }
 
-func runLoadColumn(t *testing.T, q string, c db.Column) {
+func runLoadColumn(t *testing.T, q string, c *db.Column) {
 	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)

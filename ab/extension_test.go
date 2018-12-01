@@ -9,8 +9,8 @@ import (
 func TestMatchExtensions(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []db.ExtensionNode
-		B       []db.ExtensionNode
+		A       []*db.Extension
+		B       []*db.Extension
 		Matches []ExtensionMatch
 	}
 	tests := []Test{
@@ -22,11 +22,9 @@ func TestMatchExtensions(t *testing.T) {
 		},
 		Test{
 			"add uuid extension",
-			[]db.ExtensionNode{
-				db.ExtensionNode{
-					Extension: db.Extension{
-						ExtName: "uuid-ossp",
-					},
+			[]*db.Extension{
+				&db.Extension{
+					ExtName: "uuid-ossp",
 				},
 			},
 			nil,
@@ -41,11 +39,9 @@ func TestMatchExtensions(t *testing.T) {
 		Test{
 			"plpgsql already exists",
 			nil,
-			[]db.ExtensionNode{
-				db.ExtensionNode{
-					Extension: db.Extension{
-						ExtName: "plpgsql",
-					},
+			[]*db.Extension{
+				&db.Extension{
+					ExtName: "plpgsql",
 				},
 			},
 			[]ExtensionMatch{
@@ -59,18 +55,14 @@ func TestMatchExtensions(t *testing.T) {
 		},
 		Test{
 			"citext already exists",
-			[]db.ExtensionNode{
-				db.ExtensionNode{
-					Extension: db.Extension{
-						ExtName: "citext",
-					},
+			[]*db.Extension{
+				&db.Extension{
+					ExtName: "citext",
 				},
 			},
-			[]db.ExtensionNode{
-				db.ExtensionNode{
-					Extension: db.Extension{
-						ExtName: "citext",
-					},
+			[]*db.Extension{
+				&db.Extension{
+					ExtName: "citext",
 				},
 			},
 			[]ExtensionMatch{

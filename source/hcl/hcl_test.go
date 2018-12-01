@@ -10,14 +10,14 @@ import (
 
 func TestParseBytes(t *testing.T) {
 	type Test struct {
-		Input        string
-		DatabaseNode db.DatabaseNode
+		Input    string
+		Database *db.Database
 	}
 	var (
 		tests    []Test
 		input    string
-		database db.DatabaseNode
-		tables   []db.TableNode
+		database *db.Database
+		tables   []*db.Table
 	)
 
 	// Test table with column.
@@ -30,28 +30,22 @@ schema "public" {
 	}
 }
 	`
-	tables = []db.TableNode{
-		db.TableNode{
-			Table: db.Table{
-				TableName: "users",
-			},
-			ColumnNodes: []db.ColumnNode{
-				db.ColumnNode{
-					Column: db.Column{
-						ColumnName: "email",
-						DataType:   "text",
-					},
+	tables = []*db.Table{
+		&db.Table{
+			TableName: "users",
+			Columns: []*db.Column{
+				&db.Column{
+					ColumnName: "email",
+					DataType:   "text",
 				},
 			},
 		},
 	}
-	database = db.DatabaseNode{
-		SchemaNodes: []db.SchemaNode{
-			db.SchemaNode{
-				Schema: db.Schema{
-					SchemaName: "public",
-				},
-				TableNodes: tables,
+	database = &db.Database{
+		Schemas: []*db.Schema{
+			&db.Schema{
+				SchemaName: "public",
+				Tables:     tables,
 			},
 		},
 	}
@@ -61,12 +55,10 @@ schema "public" {
 	input = `
 extension "hstore" {}
 	`
-	database = db.DatabaseNode{
-		ExtensionNodes: []db.ExtensionNode{
-			db.ExtensionNode{
-				db.Extension{
-					ExtName: "hstore",
-				},
+	database = &db.Database{
+		Extensions: []*db.Extension{
+			&db.Extension{
+				ExtName: "hstore",
 			},
 		},
 	}
@@ -77,22 +69,22 @@ extension "hstore" {}
 		if err != nil {
 			t.Fatal(err)
 		}
-		if !reflect.DeepEqual(node, test.DatabaseNode) {
+		if !reflect.DeepEqual(node, test.Database) {
 			t.Errorf("ParseBytes failure")
-			spew.Dump(node, test.DatabaseNode)
+			spew.Dump(node, test.Database)
 		}
 	}
 }
 
 func TestConvertDatabase(t *testing.T) {
 	type Test struct {
-		Value        Database
-		DatabaseNode db.DatabaseNode
+		Value    Database
+		Database *db.Database
 	}
 	tests := []Test{
 		Test{
 			Database{},
-			db.DatabaseNode{},
+			&db.Database{},
 		},
 		Test{
 			Database{
@@ -100,12 +92,10 @@ func TestConvertDatabase(t *testing.T) {
 					"public": Schema{},
 				},
 			},
-			db.DatabaseNode{
-				SchemaNodes: []db.SchemaNode{
-					db.SchemaNode{
-						Schema: db.Schema{
-							SchemaName: "public",
-						},
+			&db.Database{
+				Schemas: []*db.Schema{
+					&db.Schema{
+						SchemaName: "public",
 					},
 				},
 			},
@@ -113,9 +103,9 @@ func TestConvertDatabase(t *testing.T) {
 	}
 	for _, test := range tests {
 		node := convertDatabase(test.Value)
-		if !reflect.DeepEqual(node, test.DatabaseNode) {
+		if !reflect.DeepEqual(node, test.Database) {
 			t.Errorf("convertDatabase failure")
-			spew.Dump(node, test.DatabaseNode)
+			spew.Dump(node, test.Database)
 		}
 	}
 }
@@ -124,16 +114,14 @@ func TestConvertSchema(t *testing.T) {
 	type Test struct {
 		SchemaName string
 		Value      Schema
-		SchemaNode db.SchemaNode
+		Schema     *db.Schema
 	}
 	tests := []Test{
 		Test{
 			"public",
 			Schema{},
-			db.SchemaNode{
-				Schema: db.Schema{
-					SchemaName: "public",
-				},
+			&db.Schema{
+				SchemaName: "public",
 			},
 		},
 		Test{
@@ -143,15 +131,11 @@ func TestConvertSchema(t *testing.T) {
 					"users": Table{},
 				},
 			},
-			db.SchemaNode{
-				Schema: db.Schema{
-					SchemaName: "public",
-				},
-				TableNodes: []db.TableNode{
-					db.TableNode{
-						Table: db.Table{
-							TableName: "users",
-						},
+			&db.Schema{
+				SchemaName: "public",
+				Tables: []*db.Table{
+					&db.Table{
+						TableName: "users",
 					},
 				},
 			},
@@ -159,9 +143,9 @@ func TestConvertSchema(t *testing.T) {
 	}
 	for _, test := range tests {
 		node := convertSchema(test.SchemaName, test.Value)
-		if !reflect.DeepEqual(node, test.SchemaNode) {
+		if !reflect.DeepEqual(node, test.Schema) {
 			t.Errorf("convertSchema failure")
-			spew.Dump(node, test.SchemaNode)
+			spew.Dump(node, test.Schema)
 		}
 	}
 

@@ -9,9 +9,9 @@ type DatabaseMatch struct {
 	SchemaMatches    []SchemaMatch
 }
 
-func MatchDatabase(a, b db.DatabaseNode) DatabaseMatch {
+func MatchDatabase(a, b *db.Database) DatabaseMatch {
 	return DatabaseMatch{
-		ExtensionMatches: MatchExtensions(a.ExtensionNodes, b.ExtensionNodes),
-		SchemaMatches:    MatchSchemas(a.SchemaNodes, b.SchemaNodes),
+		ExtensionMatches: MatchExtensions(a.Extensions, b.Extensions),
+		SchemaMatches:    MatchSchemas(a.Schemas, b.Schemas),
 	}
 }

@@ -5,18 +5,18 @@ import (
 	"github.com/aj0strow/pgschema/db"
 )
 
-func LoadDatabaseNode(conn Conn) (db.DatabaseNode, error) {
-	extensionNodes, err := LoadExtensionNodes(conn)
+func LoadDatabase(conn Conn) (*db.Database, error) {
+	extensions, err := LoadExtensions(conn)
 	if err != nil {
-		return db.DatabaseNode{}, err
+		return nil, err
 	}
-	schemaNodes, err := LoadSchemaNodes(conn)
+	schemas, err := LoadSchemas(conn)
 	if err != nil {
-		return db.DatabaseNode{}, err
+		return nil, err
 	}
-	databaseNode := db.DatabaseNode{
-		ExtensionNodes: extensionNodes,
-		SchemaNodes:    schemaNodes,
+	database := &db.Database{
+		Extensions: extensions,
+		Schemas:    schemas,
 	}
-	return databaseNode, nil
+	return database, nil
 }

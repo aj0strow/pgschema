@@ -40,56 +40,52 @@ type Index struct {
 	Unique bool     `hcl:"unique"`
 }
 
-func ParseBytes(bs []byte) (db.DatabaseNode, error) {
+func ParseBytes(bs []byte) (*db.Database, error) {
 	var database Database
 	err := hcl.Unmarshal(bs, &database)
 	if err != nil {
-		return db.DatabaseNode{}, err
+		return nil, err
 	}
-	databaseNode := convertDatabase(database)
-	return databaseNode, nil
+	return convertDatabase(database), nil
 }
 
-func convertDatabase(v Database) db.DatabaseNode {
-	var exts []db.ExtensionNode
+func convertDatabase(v Database) *db.Database {
+	var exts []*db.Extension
 	for ek := range v.Extension {
 		exts = append(exts, convertExtension(ek))
 	}
-	var schemas []db.SchemaNode
+	var schemas []*db.Schema
 	for sk, sv := range v.Schema {
 		schemas = append(schemas, convertSchema(sk, sv))
 	}
-	return db.DatabaseNode{
-		ExtensionNodes: exts,
-		SchemaNodes:    schemas,
+	database := &db.Database{
+		Extensions: exts,
+		Schemas:    schemas,
+	}
+	return database
+}
+
+func convertExtension(k string) *db.Extension {
+	return &db.Extension{
+		ExtName: k,
 	}
 }
 
-func convertExtension(k string) db.ExtensionNode {
-	return db.ExtensionNode{
-		Extension: db.Extension{
-			ExtName: k,
-		},
-	}
-}
-
-func convertSchema(k string, v Schema) db.SchemaNode {
-	var tables []db.TableNode
+func convertSchema(k string, v Schema) *db.Schema {
+	var tables []*db.Table
 	for tableName, tv := range v.Table {
 		tables = append(tables, convertTable(tableName, tv))
 	}
-	return db.SchemaNode{
-		Schema: db.Schema{
-			SchemaName: k,
-		},
-		TableNodes: tables,
+	return &db.Schema{
+		SchemaName: k,
+		Tables:     tables,
 	}
 }
 
-func convertTable(tableName string, v Table) db.TableNode {
+func convertTable(tableName string, v Table) *db.Table {
 	var (
-		columns []db.ColumnNode
-		indexes []db.IndexNode
+		columns []*db.Column
+		indexes []*db.Index
 	)
 	for columnName, c := range v.Column {
 		columns = append(columns, convertColumn(columnName, c))
@@ -103,20 +99,19 @@ func convertTable(tableName string, v Table) db.TableNode {
 	for indexName, ix := range v.Index {
 		indexes = append(indexes, convertIndex(tableName, indexName, ix))
 	}
-	return db.TableNode{
-		Table: db.Table{
-			TableName: tableName,
-		},
-		ColumnNodes: columns,
-		IndexNodes:  indexes,
+	table := &db.Table{
+		TableName: tableName,
+		Columns:   columns,
+		Indexes:   indexes,
 	}
+	return table
 }
 
 var numericRe = regexp.MustCompile(`numeric\((\d+),\s*(\d+)\)`)
 var arrayRe = regexp.MustCompile(`^(.+)(?:\[\d*\])+$`)
 
-func convertColumn(k string, v Column) db.ColumnNode {
-	c := db.Column{
+func convertColumn(k string, v Column) *db.Column {
+	c := &db.Column{
 		ColumnName:    k,
 		DataType:      v.Type,
 		CastTypeUsing: v.CastTypeUsing,
@@ -142,30 +137,24 @@ func convertColumn(k string, v Column) db.ColumnNode {
 		c.DataType = arrayMatches[0][1]
 		c.Array = true
 	}
-	return db.ColumnNode{
-		Column: c,
+	return c
+}
+
+func convertIndex(tableName, indexName string, v Index) *db.Index {
+	return &db.Index{
+		TableName: tableName,
+		IndexName: indexName,
+		Exprs:     v.On,
+		Unique:    v.Unique,
 	}
 }
 
-func convertIndex(tableName, indexName string, v Index) db.IndexNode {
-	return db.IndexNode{
-		Index: db.Index{
-			TableName: tableName,
-			IndexName: indexName,
-			Exprs:     v.On,
-			Unique:    v.Unique,
-		},
-	}
-}
-
-func newPrimaryKey(tableName string, columnNames []string) db.IndexNode {
-	return db.IndexNode{
-		Index: db.Index{
-			TableName: tableName,
-			IndexName: fmt.Sprintf("%s_pkey", tableName),
-			Exprs:     columnNames,
-			Unique:    true,
-			Primary:   true,
-		},
+func newPrimaryKey(tableName string, columnNames []string) *db.Index {
+	return &db.Index{
+		TableName: tableName,
+		IndexName: fmt.Sprintf("%s_pkey", tableName),
+		Exprs:     columnNames,
+		Unique:    true,
+		Primary:   true,
 	}
 }

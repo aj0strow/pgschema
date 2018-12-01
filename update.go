@@ -64,10 +64,6 @@ func (cmd *Update) Run(args []string) int {
 		cmd.Error(err.Error())
 		return BadInput
 	}
-	if err := a.Err(); err != nil {
-		cmd.Error(err.Error())
-		return BadInput
-	}
 	var pgConfig *pgx.ConnConfig
 	if dsn != "" {
 		config, err := pgx.ParseDSN(dsn)
@@ -95,7 +91,7 @@ func (cmd *Update) Run(args []string) int {
 		return DatabaseError
 	}
 	defer conn.Close()
-	b, err := psql.LoadDatabaseNode(conn)
+	b, err := psql.LoadDatabase(conn)
 	if err != nil {
 		cmd.Error(err.Error())
 		return DatabaseError

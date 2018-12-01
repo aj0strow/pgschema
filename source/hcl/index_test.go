@@ -13,7 +13,7 @@ func TestConvertIndex(t *testing.T) {
 		TableName string
 		IndexName string
 		Value     Index
-		IndexNode db.IndexNode
+		Index     *db.Index
 	}
 	tests := []Test{
 		Test{
@@ -22,12 +22,10 @@ func TestConvertIndex(t *testing.T) {
 			Index{
 				On: []string{"lower(email)"},
 			},
-			db.IndexNode{
-				Index: db.Index{
-					TableName: "users",
-					IndexName: "users_email_key",
-					Exprs:     []string{"lower(email)"},
-				},
+			&db.Index{
+				TableName: "users",
+				IndexName: "users_email_key",
+				Exprs:     []string{"lower(email)"},
 			},
 		},
 		Test{
@@ -37,21 +35,19 @@ func TestConvertIndex(t *testing.T) {
 				On:     []string{"email"},
 				Unique: true,
 			},
-			db.IndexNode{
-				db.Index{
-					TableName: "users",
-					IndexName: "users_email_key",
-					Exprs:     []string{"email"},
-					Unique:    true,
-				},
+			&db.Index{
+				TableName: "users",
+				IndexName: "users_email_key",
+				Exprs:     []string{"email"},
+				Unique:    true,
 			},
 		},
 	}
 	for _, test := range tests {
 		node := convertIndex(test.TableName, test.IndexName, test.Value)
-		if !reflect.DeepEqual(node, test.IndexNode) {
+		if !reflect.DeepEqual(node, test.Index) {
 			t.Errorf("bad index conversion")
-			spew.Dump(node, test.IndexNode)
+			spew.Dump(node, test.Index)
 		}
 	}
 }

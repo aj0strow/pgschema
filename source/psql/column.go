@@ -7,21 +7,7 @@ import (
 	"github.com/jackc/pgx/pgtype"
 )
 
-func LoadColumnNodes(conn Conn, schema db.Schema, table db.Table) ([]db.ColumnNode, error) {
-	columns, err := LoadColumns(conn, schema.SchemaName, table.TableName)
-	if err != nil {
-		return nil, err
-	}
-	columnNodes := make([]db.ColumnNode, len(columns))
-	for i := range columns {
-		columnNodes[i] = db.ColumnNode{
-			Column: columns[i],
-		}
-	}
-	return columnNodes, nil
-}
-
-func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
+func LoadColumns(conn Conn, schemaName, tableName string) ([]*db.Column, error) {
 	elementTypes, err := LoadElementTypes(conn, schemaName, tableName)
 	if err != nil {
 		return nil, err
@@ -46,9 +32,9 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	columns := []db.Column{}
+	columns := []*db.Column{}
 	for rows.Next() {
-		column := db.Column{}
+		column := &db.Column{}
 		var (
 			isNullable       string
 			colDefault       pgtype.Text
@@ -84,9 +70,11 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 		if column.DataType == "ARRAY" {
 			elementType := findElementType(elementTypes, elementTypeId)
 			column.Array = true
-			column.DataType = elementType.DataType
-			column.NumericPrecision = elementType.NumericPrecision
-			column.NumericScale = elementType.NumericScale
+			if elementType != nil {
+				column.DataType = elementType.DataType
+				column.NumericPrecision = elementType.NumericPrecision
+				column.NumericScale = elementType.NumericScale
+			}
 		}
 		columns = append(columns, column)
 	}
@@ -96,13 +84,13 @@ func LoadColumns(conn Conn, schemaName, tableName string) ([]db.Column, error) {
 	return columns, nil
 }
 
-func findElementType(elementTypes []ElementType, elementId string) ElementType {
+func findElementType(elementTypes []*ElementType, elementId string) *ElementType {
 	for i := range elementTypes {
 		if elementTypes[i].ElementTypeId == elementId {
 			return elementTypes[i]
 		}
 	}
-	panic("element type not found")
+	return nil
 }
 
 type ElementType struct {
@@ -112,7 +100,7 @@ type ElementType struct {
 	NumericScale     int
 }
 
-func LoadElementTypes(conn Conn, schemaName, tableName string) ([]ElementType, error) {
+func LoadElementTypes(conn Conn, schemaName, tableName string) ([]*ElementType, error) {
 	q := fmt.Sprintf(`
 		SELECT
 			collection_type_identifier,
@@ -131,9 +119,9 @@ func LoadElementTypes(conn Conn, schemaName, tableName string) ([]ElementType, e
 		return nil, err
 	}
 	defer rows.Close()
-	elementTypes := []ElementType{}
+	elementTypes := []*ElementType{}
 	for rows.Next() {
-		elementType := ElementType{}
+		elementType := &ElementType{}
 		var (
 			numericPrecision pgtype.Int4
 			numericScale     pgtype.Int4

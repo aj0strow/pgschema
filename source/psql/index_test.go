@@ -18,19 +18,19 @@ const userTable = `
 func TestLoadIndexes(t *testing.T) {
 	type Test struct {
 		Setup string
-		Index db.Index
+		Index *db.Index
 	}
 	tests := []Test{
 		Test{
 			`CREATE INDEX myindex ON users (name)`,
-			db.Index{
+			&db.Index{
 				TableName: "users",
 				IndexName: "myindex",
 			},
 		},
 		Test{
 			`CREATE UNIQUE INDEX users_name_key ON users (name)`,
-			db.Index{
+			&db.Index{
 				TableName: "users",
 				IndexName: "users_name_key",
 				Unique:    true,
@@ -38,7 +38,7 @@ func TestLoadIndexes(t *testing.T) {
 		},
 		Test{
 			`ALTER TABLE users ADD PRIMARY KEY (name)`,
-			db.Index{
+			&db.Index{
 				TableName: "users",
 				IndexName: "users_pkey",
 				Unique:    true,
@@ -52,7 +52,7 @@ func TestLoadIndexes(t *testing.T) {
 	}
 }
 
-func runIndexTest(t *testing.T, q string, ix db.Index) {
+func runIndexTest(t *testing.T, q string, ix *db.Index) {
 	conn, err := temp.Connect("pgschema")
 	if err != nil {
 		t.Fatal(err)

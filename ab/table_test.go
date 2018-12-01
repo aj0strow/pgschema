@@ -6,45 +6,28 @@ import (
 	"testing"
 )
 
-func newTable(name string) db.Table {
-	return db.Table{
-		TableName: name,
-	}
-}
-
-func newTableNode(name string) db.TableNode {
-	return db.TableNode{
-		Table: newTable(name),
-	}
-}
-
-func ptrTable(name string) *db.Table {
-	table := newTable(name)
-	return &table
-}
-
 func TestMatchTableNodes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []db.TableNode
-		B       []db.TableNode
+		A       []*db.Table
+		B       []*db.Table
 		Matches []TableMatch
 	}
 	tests := []Test{
 		Test{
 			"multiple tables",
-			[]db.TableNode{
-				newTableNode("users"),
-				newTableNode("passwords"),
+			[]*db.Table{
+				&db.Table{TableName: "users"},
+				&db.Table{TableName: "passwords"},
 			},
 			nil,
 			[]TableMatch{
 				TableMatch{
-					A: ptrTable("users"),
+					A: &db.Table{TableName: "users"},
 					B: nil,
 				},
 				TableMatch{
-					A: ptrTable("passwords"),
+					A: &db.Table{TableName: "passwords"},
 					B: nil,
 				},
 			},

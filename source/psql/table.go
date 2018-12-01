@@ -5,28 +5,7 @@ import (
 	"github.com/aj0strow/pgschema/db"
 )
 
-func LoadTableNodes(conn Conn, schema db.Schema) ([]db.TableNode, error) {
-	tables, err := LoadTables(conn, schema.SchemaName)
-	if err != nil {
-		return nil, err
-	}
-	tableNodes := make([]db.TableNode, len(tables))
-	for i := range tables {
-		columnNodes, err := LoadColumnNodes(conn, schema, tables[i])
-		if err != nil {
-			return nil, err
-		}
-		indexNodes, err := LoadIndexNodes(conn, schema, tables[i])
-		tableNodes[i] = db.TableNode{
-			Table:       tables[i],
-			ColumnNodes: columnNodes,
-			IndexNodes:  indexNodes,
-		}
-	}
-	return tableNodes, nil
-}
-
-func LoadTables(conn Conn, schemaName string) ([]db.Table, error) {
+func LoadTables(conn Conn, schemaName string) ([]*db.Table, error) {
 	q := fmt.Sprintf(`
 		SELECT table_name
 		FROM information_schema.tables
@@ -39,14 +18,30 @@ func LoadTables(conn Conn, schemaName string) ([]db.Table, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	tables := []db.Table{}
+	tables := []*db.Table{}
 	for rows.Next() {
-		table := db.Table{}
+		table := &db.Table{}
 		rows.Scan(&table.TableName)
 		tables = append(tables, table)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
+	}
+	for _, table := range tables {
+		columns, err := LoadColumns(conn, schemaName, table.TableName)
+		if err != nil {
+			return nil, err
+		}
+		if len(columns) > 0 {
+			table.Columns = columns
+		}
+		indexes, err := LoadIndexes(conn, schemaName, table.TableName)
+		if err != nil {
+			return nil, err
+		}
+		if len(indexes) > 0 {
+			table.Indexes = indexes
+		}
 	}
 	return tables, nil
 }

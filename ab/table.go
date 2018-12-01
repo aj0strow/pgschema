@@ -14,50 +14,46 @@ type TableMatch struct {
 
 // MatchTableNodes takes separate TableNode lists, and deep merges them
 // by table name into one combined TableMatch list.
-func MatchTables(a, b []db.TableNode) []TableMatch {
+func MatchTables(a, b []*db.Table) []TableMatch {
 	var tableMatches []TableMatch
 	fromA := map[string]bool{}
-	for _, nodeA := range a {
-		tableA := nodeA.Table
+	for _, tableA := range a {
 		tableName := tableA.TableName
 		fromA[tableName] = true
-		nodeB := findTableNode(b, tableName)
-		if nodeB != nil {
-			tableB := nodeB.Table
+		tableB := findTable(b, tableName)
+		if tableB != nil {
 			tableMatches = append(tableMatches, TableMatch{
-				A:             &tableA,
-				B:             &tableB,
-				ColumnMatches: MatchColumns(nodeA.ColumnNodes, nodeB.ColumnNodes),
-				IndexMatches:  MatchIndexes(nodeA.IndexNodes, nodeB.IndexNodes),
+				A:             tableA,
+				B:             tableB,
+				ColumnMatches: MatchColumns(tableA.Columns, tableB.Columns),
+				IndexMatches:  MatchIndexes(tableA.Indexes, tableB.Indexes),
 			})
 		} else {
 			tableMatches = append(tableMatches, TableMatch{
-				A:             &tableA,
+				A:             tableA,
 				B:             nil,
-				ColumnMatches: MatchColumns(nodeA.ColumnNodes, nil),
-				IndexMatches:  MatchIndexes(nodeA.IndexNodes, nil),
+				ColumnMatches: MatchColumns(tableA.Columns, nil),
+				IndexMatches:  MatchIndexes(tableA.Indexes, nil),
 			})
 		}
 	}
-	for _, nodeB := range b {
-		tableB := nodeB.Table
-		tableName := tableB.TableName
-		if !fromA[tableName] {
+	for _, tableB := range b {
+		if !fromA[tableB.TableName] {
 			tableMatches = append(tableMatches, TableMatch{
 				A:             nil,
-				B:             &tableB,
-				ColumnMatches: MatchColumns(nil, nodeB.ColumnNodes),
-				IndexMatches:  MatchIndexes(nil, nodeB.IndexNodes),
+				B:             tableB,
+				ColumnMatches: MatchColumns(nil, tableB.Columns),
+				IndexMatches:  MatchIndexes(nil, tableB.Indexes),
 			})
 		}
 	}
 	return tableMatches
 }
 
-func findTableNode(nodes []db.TableNode, name string) *db.TableNode {
+func findTable(nodes []*db.Table, name string) *db.Table {
 	for _, node := range nodes {
-		if node.Table.TableName == name {
-			return &node
+		if node.TableName == name {
+			return node
 		}
 	}
 	return nil

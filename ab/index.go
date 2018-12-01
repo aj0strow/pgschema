@@ -9,43 +9,40 @@ type IndexMatch struct {
 	B *db.Index
 }
 
-func MatchIndexes(a, b []db.IndexNode) []IndexMatch {
+func MatchIndexes(a, b []*db.Index) []IndexMatch {
 	var matches []IndexMatch
 	fromA := map[string]bool{}
-	for _, nodeA := range a {
-		indexA := nodeA.Index
+	for _, indexA := range a {
 		indexName := indexA.IndexName
 		fromA[indexName] = true
-		nodeB := findIndexNode(b, indexName)
-		if nodeB == nil {
+		indexB := findIndex(b, indexName)
+		if indexB == nil {
 			matches = append(matches, IndexMatch{
-				A: &indexA,
+				A: indexA,
 				B: nil,
 			})
 		} else {
-			indexB := nodeB.Index
 			matches = append(matches, IndexMatch{
-				A: &indexA,
-				B: &indexB,
+				A: indexA,
+				B: indexB,
 			})
 		}
 	}
-	for _, nodeB := range b {
-		indexB := nodeB.Index
+	for _, indexB := range b {
 		if !fromA[indexB.IndexName] {
 			matches = append(matches, IndexMatch{
 				A: nil,
-				B: &indexB,
+				B: indexB,
 			})
 		}
 	}
 	return matches
 }
 
-func findIndexNode(nodes []db.IndexNode, name string) *db.IndexNode {
-	for _, node := range nodes {
-		if node.Index.IndexName == name {
-			return &node
+func findIndex(idxs []*db.Index, name string) *db.Index {
+	for _, idx := range idxs {
+		if idx.IndexName == name {
+			return idx
 		}
 	}
 	return nil

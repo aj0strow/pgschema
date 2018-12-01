@@ -17,8 +17,8 @@ func TestCreateIndexStruct(t *testing.T) {
 	}{
 		{
 			`add primary key`,
-			&db.Schema{"public"},
-			&db.Table{"users"},
+			&db.Schema{SchemaName: "public"},
+			&db.Table{TableName: "users"},
 			&db.Index{
 				Primary: true,
 				Exprs:   []string{"id"},
@@ -33,8 +33,8 @@ func TestCreateIndexStruct(t *testing.T) {
 		},
 		{
 			`create unique index on expression`,
-			&db.Schema{"public"},
-			&db.Table{"users"},
+			&db.Schema{SchemaName: "public"},
+			&db.Table{TableName: "users"},
 			&db.Index{
 				IndexName: "users_email_key",
 				Exprs:     []string{"lower(email)"},
@@ -50,8 +50,8 @@ func TestCreateIndexStruct(t *testing.T) {
 		},
 		{
 			`create compound index with sort order`,
-			&db.Schema{"public"},
-			&db.Table{"users"},
+			&db.Schema{SchemaName: "public"},
+			&db.Table{TableName: "users"},
 			&db.Index{
 				IndexName: "users_active_by_city",
 				Exprs:     []string{"city", "last_active_at DESC"},
@@ -82,8 +82,8 @@ func TestDropIndexStruct(t *testing.T) {
 	}{
 		{
 			`drop primary key`,
-			&db.Schema{"public"},
-			&db.Table{"users"},
+			&db.Schema{SchemaName: "public"},
+			&db.Table{TableName: "users"},
 			&db.Index{
 				IndexName: "users_pkey",
 				Primary:   true,
@@ -96,7 +96,7 @@ func TestDropIndexStruct(t *testing.T) {
 		},
 		{
 			`drop normal index`,
-			&db.Schema{"public"},
+			&db.Schema{SchemaName: "public"},
 			&db.Table{},
 			&db.Index{
 				IndexName: "users_email_key",

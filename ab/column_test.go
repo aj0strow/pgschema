@@ -6,31 +6,12 @@ import (
 	"testing"
 )
 
-func newColumnNode(name string) db.ColumnNode {
-	return db.ColumnNode{
-		db.Column{
-			ColumnName: name,
-		},
-	}
-}
-
-func ptrColumnNode(name string) *db.ColumnNode {
-	node := newColumnNode(name)
-	return &node
-}
-
-func ptrColumn(name string) *db.Column {
-	return &db.Column{
-		ColumnName: name,
-	}
-}
-
 func TestFindColumNode(t *testing.T) {
 	type Test struct {
-		Name        string
-		ColumnNodes []db.ColumnNode
-		SearchName  string
-		Found       *db.ColumnNode
+		Name       string
+		Columns    []*db.Column
+		SearchName string
+		Found      *db.Column
 	}
 	tests := []Test{
 		Test{
@@ -41,30 +22,30 @@ func TestFindColumNode(t *testing.T) {
 		},
 		Test{
 			`empty column list`,
-			[]db.ColumnNode{},
+			[]*db.Column{},
 			"test1",
 			nil,
 		},
 		Test{
 			`wrong name`,
-			[]db.ColumnNode{
-				newColumnNode("test2"),
+			[]*db.Column{
+				&db.Column{ColumnName: "test2"},
 			},
 			"test1",
 			nil,
 		},
 		Test{
 			`correct name`,
-			[]db.ColumnNode{
-				newColumnNode("test1"),
-				newColumnNode("test2"),
+			[]*db.Column{
+				&db.Column{ColumnName: "test1"},
+				&db.Column{ColumnName: "test2"},
 			},
 			"test2",
-			ptrColumnNode("test2"),
+			&db.Column{ColumnName: "test2"},
 		},
 	}
 	for _, test := range tests {
-		node := findColumnNode(test.ColumnNodes, test.SearchName)
+		node := findColumn(test.Columns, test.SearchName)
 		if !reflect.DeepEqual(node, test.Found) {
 			t.Errorf("findColumnNode - %s", test.Name)
 		}
@@ -74,8 +55,8 @@ func TestFindColumNode(t *testing.T) {
 func TestMatchColumnNodes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []db.ColumnNode
-		B       []db.ColumnNode
+		A       []*db.Column
+		B       []*db.Column
 		Matches []ColumnMatch
 	}
 	tests := []Test{
@@ -87,19 +68,19 @@ func TestMatchColumnNodes(t *testing.T) {
 		},
 		Test{
 			"empty column node lists",
-			[]db.ColumnNode{},
-			[]db.ColumnNode{},
+			[]*db.Column{},
+			[]*db.Column{},
 			nil,
 		},
 		Test{
 			"columns in a only",
-			[]db.ColumnNode{
-				newColumnNode("email"),
+			[]*db.Column{
+				&db.Column{ColumnName: "email"},
 			},
 			nil,
 			[]ColumnMatch{
 				ColumnMatch{
-					A: ptrColumn("email"),
+					A: &db.Column{ColumnName: "email"},
 					B: nil,
 				},
 			},
@@ -107,30 +88,30 @@ func TestMatchColumnNodes(t *testing.T) {
 		Test{
 			"columns in b only",
 			nil,
-			[]db.ColumnNode{
-				newColumnNode("dob"),
+			[]*db.Column{
+				&db.Column{ColumnName: "dob"},
 			},
 			[]ColumnMatch{
 				ColumnMatch{
 					A: nil,
-					B: ptrColumn("dob"),
+					B: &db.Column{ColumnName: "dob"},
 				},
 			},
 		},
 		Test{
 			"multiple columns",
-			[]db.ColumnNode{
-				newColumnNode("one"),
-				newColumnNode("two"),
+			[]*db.Column{
+				&db.Column{ColumnName: "one"},
+				&db.Column{ColumnName: "two"},
 			},
 			nil,
 			[]ColumnMatch{
 				ColumnMatch{
-					A: ptrColumn("one"),
+					A: &db.Column{ColumnName: "one"},
 					B: nil,
 				},
 				ColumnMatch{
-					A: ptrColumn("two"),
+					A: &db.Column{ColumnName: "two"},
 					B: nil,
 				},
 			},

@@ -10,8 +10,8 @@ import (
 func TestMatchIndexes(t *testing.T) {
 	type Test struct {
 		Name    string
-		A       []db.IndexNode
-		B       []db.IndexNode
+		A       []*db.Index
+		B       []*db.Index
 		Matches []IndexMatch
 	}
 	tests := []Test{
@@ -23,11 +23,9 @@ func TestMatchIndexes(t *testing.T) {
 		},
 		Test{
 			"add new index",
-			[]db.IndexNode{
-				db.IndexNode{
-					Index: db.Index{
-						IndexName: "users_pkey",
-					},
+			[]*db.Index{
+				&db.Index{
+					IndexName: "users_pkey",
 				},
 			},
 			nil,
@@ -42,11 +40,9 @@ func TestMatchIndexes(t *testing.T) {
 		Test{
 			"remove existing index",
 			nil,
-			[]db.IndexNode{
-				db.IndexNode{
-					Index: db.Index{
-						IndexName: "users_email_idx",
-					},
+			[]*db.Index{
+				&db.Index{
+					IndexName: "users_email_idx",
 				},
 			},
 			[]IndexMatch{
@@ -59,18 +55,14 @@ func TestMatchIndexes(t *testing.T) {
 		},
 		Test{
 			"existing index noop",
-			[]db.IndexNode{
-				db.IndexNode{
-					Index: db.Index{
-						IndexName: "users_nickname_key",
-					},
+			[]*db.Index{
+				&db.Index{
+					IndexName: "users_nickname_key",
 				},
 			},
-			[]db.IndexNode{
-				db.IndexNode{
-					Index: db.Index{
-						IndexName: "users_nickname_key",
-					},
+			[]*db.Index{
+				&db.Index{
+					IndexName: "users_nickname_key",
 				},
 			},
 			[]IndexMatch{

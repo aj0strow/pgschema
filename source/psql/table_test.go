@@ -5,6 +5,8 @@ import (
 	"github.com/aj0strow/pgschema/temp"
 	"reflect"
 	"testing"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestLoadTables(t *testing.T) {
@@ -21,12 +23,13 @@ func TestLoadTables(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := []db.Table{
-		db.Table{
+	expected := []*db.Table{
+		&db.Table{
 			TableName: "users",
 		},
 	}
 	if !reflect.DeepEqual(tables, expected) {
-		t.Errorf("wrong table list: %+v", tables)
+		t.Errorf("wrong table list")
+		spew.Dump(tables, expected)
 	}
 }

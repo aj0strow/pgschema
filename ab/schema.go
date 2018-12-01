@@ -13,46 +13,43 @@ type SchemaMatch struct {
 
 // MatchSchemaNodes takes separate SchemaNode lists, and deep
 // merges them into one combined SchemaMatch list.
-func MatchSchemas(a, b []db.SchemaNode) []SchemaMatch {
+func MatchSchemas(a, b []*db.Schema) []SchemaMatch {
 	var schemaMatches []SchemaMatch
 	fromA := map[string]bool{}
-	for _, nodeA := range a {
-		schemaA := nodeA.Schema
+	for _, schemaA := range a {
 		schemaName := schemaA.SchemaName
 		fromA[schemaName] = true
-		nodeB := findSchemaNode(b, schemaName)
-		if nodeB != nil {
-			schemaB := nodeB.Schema
+		schemaB := findSchema(b, schemaName)
+		if schemaB != nil {
 			schemaMatches = append(schemaMatches, SchemaMatch{
-				A:            &schemaA,
-				B:            &schemaB,
-				TableMatches: MatchTables(nodeA.TableNodes, nodeB.TableNodes),
+				A:            schemaA,
+				B:            schemaB,
+				TableMatches: MatchTables(schemaA.Tables, schemaB.Tables),
 			})
 		} else {
 			schemaMatches = append(schemaMatches, SchemaMatch{
-				A:            &schemaA,
+				A:            schemaA,
 				B:            nil,
-				TableMatches: MatchTables(nodeA.TableNodes, nil),
+				TableMatches: MatchTables(schemaA.Tables, nil),
 			})
 		}
 	}
-	for _, nodeB := range b {
-		schemaB := nodeB.Schema
+	for _, schemaB := range b {
 		if !fromA[schemaB.SchemaName] {
 			schemaMatches = append(schemaMatches, SchemaMatch{
 				A:            nil,
-				B:            &schemaB,
-				TableMatches: MatchTables(nil, nodeB.TableNodes),
+				B:            schemaB,
+				TableMatches: MatchTables(nil, schemaB.Tables),
 			})
 		}
 	}
 	return schemaMatches
 }
 
-func findSchemaNode(nodes []db.SchemaNode, name string) *db.SchemaNode {
+func findSchema(nodes []*db.Schema, name string) *db.Schema {
 	for _, node := range nodes {
-		if node.Schema.SchemaName == name {
-			return &node
+		if node.SchemaName == name {
+			return node
 		}
 	}
 	return nil

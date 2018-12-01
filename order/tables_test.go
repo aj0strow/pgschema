@@ -17,9 +17,9 @@ func TestCreateTableStruct(t *testing.T) {
 	}{
 		{
 			`create table change`,
-			&db.Schema{"public"},
+			&db.Schema{SchemaName: "public"},
 			plan.CreateTable{
-				Table: &db.Table{"users"},
+				Table: &db.Table{TableName: "users"},
 			},
 			[]Change{
 				CreateTable{"public", "users"},
@@ -226,13 +226,13 @@ func TestDropTableSlice(t *testing.T) {
 		},
 		{
 			`drop multiple tables`,
-			&db.Schema{"public"},
+			&db.Schema{SchemaName: "public"},
 			[]plan.DropTable{
 				plan.DropTable{
-					Table: &db.Table{"temp1"},
+					Table: &db.Table{TableName: "temp1"},
 				},
 				plan.DropTable{
-					Table: &db.Table{"temp2"},
+					Table: &db.Table{TableName: "temp2"},
 				},
 			},
 			[]Change{
